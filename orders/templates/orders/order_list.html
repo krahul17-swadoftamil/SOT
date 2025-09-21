@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto py-10 text-white">
+  <h2 class="text-2xl text-orange-400 font-bold mb-4">📦 My Orders</h2>
+
+  {% if orders %}
+    <div class="space-y-4">
+      {% for order in orders %}
+        <div class="bg-[#111] p-4 rounded-lg border border-gray-800">
+          <h3 class="font-semibold">Order #{{ order.id }}</h3>
+          <p>Status: <span class="text-orange-400">{{ order.get_status_display }}</span></p>
+          <p>Total: ₹{{ order.total_price }}</p>
+          <a href="{% url 'orders:order_detail' order.id %}"
+             class="text-sm text-blue-400 hover:underline">View Details</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-400">No orders found.</p>
+  {% endif %}
+</div>
+{% endblock %}

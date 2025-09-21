@@ -1,0 +1,181 @@
+{% load static %}
+{% comment %}
+  vendors/home.html
+  - Renders full page when is_ajax is not True
+  - When is_ajax == True, template outputs only the inner vendor cards (so JS can replace #vendorsContainer)
+{% endcomment %}
+
+{% if not is_ajax %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Swad of Tamil - Vendors</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <style>
+    /* (same CSS as you provided) */
+    body { font-family: 'Roboto', sans-serif; margin: 0; background: #000; color: #fff; }
+    header { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid darkorange; position: sticky; top: 0; z-index: 1000; }
+    header h1 { color: darkorange; font-size: 1.7rem; font-weight: 700; letter-spacing: 1px; }
+    nav a { margin-left: 18px; color: #fff; text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    nav a:hover { color: darkorange; }
+    .hero { text-align: center; padding: 40px 20px 20px; background: linear-gradient(135deg, #111, #1c1c1c); animation: fadeIn 1.2s ease-in-out; }
+    .hero h2 { color: darkorange; font-size: 2rem; margin-bottom: 10px; }
+    .hero p { color: #ccc; max-width: 700px; margin: 0 auto; font-size: 1rem; }
+    .search-bar { text-align: center; margin: 20px auto 40px; }
+    .search-bar input { padding: 10px 14px; border: 1px solid darkorange; border-radius: 8px; background: #111; color: #fff; margin: 5px; width: 220px; transition: box-shadow 0.3s; }
+    .search-bar input:focus { outline: none; box-shadow: 0 0 10px darkorange; }
+    .search-bar button { padding: 10px 16px; background: darkorange; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .search-bar button:hover { background: #ffb347; }
+    .vendors { padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; animation: fadeUp 1s ease-in-out; }
+    .vendor-card { background: #111; border-radius: 15px; padding: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 14px rgba(255,140,0,0.25); transition: transform 0.4s, box-shadow 0.4s; position: relative; overflow: hidden; }
+    .vendor-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 22px rgba(255,140,0,0.6); }
+    .vendor-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,140,0,0.3) 10%, transparent 40%); animation: sparkle 6s infinite linear; }
+    @keyframes sparkle { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .vendor-card img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid darkorange; object-fit: cover; margin-bottom: 10px; position: relative; z-index: 2; }
+    .vendor-card h3 { color: darkorange; font-size: 1.2rem; margin: 5px 0; font-weight: 700; }
+    .status { font-size: 0.8rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; display: inline-block; margin-bottom: 10px; z-index: 2; position: relative; }
+    .available { background: #0f0; color: #000; } .unavailable { background: #f00; color: #fff; }
+    .vendor-info { text-align: left; font-size: 0.85rem; color: #ccc; margin-top: 10px; line-height: 1.5; z-index: 2; position: relative; }
+    .vendor-info p { margin: 4px 0; display:flex; align-items:center; gap:6px; }
+    .vendor-info i { color: darkorange; width: 16px; }
+    .rating { margin: 10px 0; font-size: 0.9rem; color: gold; z-index: 2; position: relative; }
+    .rating span { color: #fff; margin-left: 6px; font-size: 0.8rem; }
+    .actions { margin-top: 12px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; z-index:2; position:relative; }
+    .btn { background: darkorange; color: #000; border: none; padding: 7px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: background 0.3s; text-decoration: none; }
+    .btn:hover { background: #ffb347; }
+    .btn-whatsapp { background: #25D366; color: #fff; }
+    .btn-whatsapp:hover { background: #1ebe57; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    footer { text-align:center; padding:20px; background:#111; font-size:0.85rem; color:#888; border-top:1px solid rgba(255,255,255,0.1); }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Swad of Tamil</h1>
+    <nav>
+      <a href="{% url 'core:home' %}">🏠 Home</a>
+      <a href="{% url 'core:products' %}">🍲 Products</a>
+      <a href="{% url 'core:mission' %}">🎯 Mission</a>
+      <a href="{% url 'core:contact' %}">📞 Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h2>🌟 Premium Vendor Network 🌟</h2>
+    <p>Discover authentic Tamil flavors from top-rated vendors. Search by <b style="color:darkorange;">Pincode</b>, <b style="color:darkorange;">City</b>, or <b style="color:darkorange;">SOT Code</b>.</p>
+  </section>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <form id="searchForm">
+      <input type="text" name="pincode" placeholder="🔢 Enter Pincode" value="{{ request.GET.pincode|default:'' }}">
+      <input type="text" name="city" placeholder="🏙️ Enter City" value="{{ request.GET.city|default:'' }}">
+      <input type="text" name="sot" placeholder="🆔 Enter SOT Code" value="{{ request.GET.sot|default:'' }}">
+      <button type="submit">🔍 Search</button>
+      <button type="button" id="resetBtn" style="margin-left:8px;" class="btn">Reset</button>
+    </form>
+  </div>
+{% endif %} {# end not is_ajax - now vendor list (always rendered) #}
+
+<!-- Vendors block (this is returned on AJAX as well) -->
+<section class="vendors" id="vendorsContainer">
+  {% for vendor in vendors %}
+    <div class="vendor-card">
+      {% if vendor.image %}
+        <img src="{{ vendor.image.url }}" alt="{{ vendor.name }}">
+      {% else %}
+        <img src="{% static 'images/default_vendor.jpg' %}" alt="Vendor">
+      {% endif %}
+
+      <span class="status {% if vendor.available %}available{% else %}unavailable{% endif %}">
+        {% if vendor.available %}✔ Available{% else %}❌ Unavailable{% endif %}
+      </span>
+
+      <h3>{{ vendor.name }}</h3>
+
+      <div class="vendor-info">
+        <p><i class="fas fa-code"></i> <b style="color:darkorange;">SOT:</b> {{ vendor.code }}</p>
+        <p><i class="fas fa-user"></i> Owner: {{ vendor.owner_name }}</p>
+        <p><i class="fas fa-map-marker-alt"></i> {{ vendor.city }} {% if vendor.pincode %} ({{ vendor.pincode }}){% endif %}</p>
+        <p><i class="fas fa-star"></i> Exp: {{ vendor.experience }} Yrs</p>
+        <p><i class="fas fa-utensils"></i> Signature: {{ vendor.signature_dish }}</p>
+        <p><i class="fas fa-box"></i> Items: {{ vendor.items_count }}</p>
+      </div>
+
+      <div class="rating">
+        ⭐⭐⭐⭐☆ <span>( {{ vendor.reviews_count }} reviews )</span>
+      </div>
+
+      <div class="actions">
+        {% if vendor.menu_card %}
+          <a href="{{ vendor.menu_card.url }}" class="btn" target="_blank">📖 Menu</a>
+        {% endif %}
+        <a href="{% url 'vendors:combo_builder' vendor.id %}" class="btn">🍱 Order Combo</a>
+        <a href="{% url 'vendors:vendor_detail' vendor.code %}" class="btn">ℹ️ Details</a>
+        <a href="https://wa.me/{{ vendor.whatsapp_number|default:'919999999999' }}?text=Hi%20{{ vendor.name }}%2C%20I%20want%20to%20order%20from%20Swad%20of%20Tamil!" target="_blank" class="btn btn-whatsapp">💬 WhatsApp</a>
+      </div>
+    </div>
+  {% empty %}
+    <p style="text-align:center; color:#aaa;">No vendors found. Try different search.</p>
+  {% endfor %}
+</section>
+
+{% if not is_ajax %}
+  <!-- Footer -->
+  <footer>
+    © 2025 Swad of Tamil. Crafted with ❤️ in Tamil Nadu.
+  </footer>
+
+  <!-- AJAX Script -->
+  <script>
+    (function() {
+      const searchForm = document.getElementById("searchForm");
+      const vendorsContainer = document.getElementById("vendorsContainer");
+      const resetBtn = document.getElementById("resetBtn");
+
+      function doSearch(form) {
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+
+        fetch("{% url 'vendors:search_vendor' %}?" + params, {
+          headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.text();
+        })
+        .then(html => {
+          vendorsContainer.innerHTML = html;
+          // Optionally update browser URL (pushState) without reload
+          const newUrl = window.location.pathname + (params ? '?' + params : '');
+          history.replaceState(null, '', newUrl);
+        })
+        .catch(err => {
+          console.error("Search error:", err);
+        });
+      }
+
+      searchForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        doSearch(this);
+      });
+
+      resetBtn.addEventListener("click", function() {
+        searchForm.reset();
+        doSearch(searchForm); // reload all vendors
+      });
+    })();
+  </script>
+</body>
+</html>
+{% endif %}

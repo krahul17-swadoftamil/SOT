@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="background: linear-gradient(135deg,#0d0d0d,#1a1a1a); 
+            color:#fff; padding:40px; border-radius:20px; 
+            text-align:center; max-width:1000px; margin:40px auto; 
+            box-shadow:0 8px 30px rgba(0,0,0,0.7);">
+
+    <!-- ✅ Confirmation Heading -->
+    <h2 style="color:darkorange; font-size:2rem; margin-bottom:15px; text-shadow:0 0 12px rgba(255,140,0,0.7);">
+        🎉 Order Confirmed!
+    </h2>
+
+    <p style="font-size:18px; color:#ccc;">
+        Thank you <b>{{ order.customer.name|default:"Customer" }}</b> for choosing  
+        <span style="color:darkorange; font-weight:bold;">{{ order.vendor.name|default:"Vendor" }}</span>.
+    </p>
+
+    <p style="font-size:16px; color:#aaa; margin-bottom:25px;">
+        Your order ID is <b>#{{ order.id }}</b>.  
+        We’ll notify you as soon as it’s ready. 🚀
+    </p>
+
+    <!-- ✅ Order Items Table -->
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; margin:20px 0; font-size:15px;">
+          <thead>
+              <tr style="background:#111; color:darkorange;">
+                  <th style="padding:12px; text-align:left;">Item</th>
+                  <th style="padding:12px; text-align:center;">Qty</th>
+                  <th style="padding:12px; text-align:center;">Price (₹)</th>
+                  <th style="padding:12px; text-align:center;">Total (₹)</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for item in order.items.all %}
+              <tr style="border-bottom:1px solid #333;">
+                  <td style="padding:12px;">
+                      {% if item.combo %} {{ item.combo.name }}
+                      {% elif item.custom_combo %} {{ item.custom_combo.title }}
+                      {% elif item.menu_item %} {{ item.menu_item.name }}
+                      {% else %} Unknown Item {% endif %}
+                  </td>
+                  <td style="padding:12px; text-align:center;">{{ item.quantity }}</td>
+                  <td style="padding:12px; text-align:center;">
+                      {% if item.combo %} ₹{{ item.combo.price|floatformat:2 }}
+                      {% elif item.custom_combo %} ₹{{ item.custom_combo.price|floatformat:2 }}
+                      {% elif item.menu_item %} ₹{{ item.menu_item.price|floatformat:2 }}
+                      {% else %} ₹0.00 {% endif %}
+                  </td>
+                  <td style="padding:12px; text-align:center;">₹{{ item.total_price|floatformat:2 }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="4" style="padding:15px; color:#aaa; text-align:center;">No items found in this order.</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+    </div>
+
+    <!-- ✅ Grand Total -->
+    <h3 style="color:yellow; margin-top:25px; text-shadow:0 0 10px rgba(255,255,0,0.6);">
+        Grand Total: ₹{{ order.total_amount|floatformat:2 }}
+    </h3>
+
+    <!-- ✅ Status + Info -->
+    <div style="margin-top:30px; font-size:15px; color:#ccc; line-height:1.6;">
+        <p>
+            <b>Status:</b> {{ order.status|title }} <br>
+            <b>Payment:</b> {{ order.get_payment_method_display }} <br>
+            <b>Placed On:</b> {{ order.created_at|date:"M d, Y H:i" }}
+        </p>
+    </div>
+
+    <!-- ✅ Buttons -->
+    <div style="margin-top:35px;">
+        <a href="{% url 'orders:orders_list' %}" 
+           style="background:linear-gradient(45deg,darkorange,#ffb84d); 
+                  color:#111; padding:14px 28px; border-radius:30px; 
+                  font-weight:bold; text-decoration:none; margin:5px; 
+                  box-shadow:0 4px 12px rgba(255,140,0,0.4); 
+                  transition:all .3s;">
+            📦 Track My Orders
+        </a>
+
+        <a href="{% url 'core:home' %}" 
+           style="background:#333; color:white; padding:14px 28px; 
+                  border-radius:30px; font-weight:bold; text-decoration:none; 
+                  margin-left:10px; transition:all .3s;">
+            🏠 Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}

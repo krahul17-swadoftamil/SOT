@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #000;
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+  }
+  .accent {
+    color: #FF6B00;
+  }
+  .card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 12px rgba(255, 107, 0, 0.1);
+  }
+  .divider {
+    border-top: 1px solid #222;
+    margin: 12px 0;
+  }
+  .tracking-step {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+  }
+  .tracking-step.active {
+    color: #FF6B00;
+    font-weight: bold;
+  }
+  .tracking-step.done {
+    color: #22c55e; /* green */
+    font-weight: bold;
+  }
+  .btn {
+    display: inline-block;
+    background: #FF6B00;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  .btn:hover {
+    background: #ff7f24;
+    transform: scale(1.05);
+  }
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px dashed #222;
+    padding-bottom: 8px;
+  }
+  .addon {
+    font-size: 12px;
+    color: #aaa;
+  }
+</style>
+
+<div class="container mx-auto max-w-4xl p-6">
+
+  <!-- HEADER -->
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold accent">🧾 Order Summary</h1>
+    <p class="text-gray-400 mt-2">Order #{{ order.id }} • Placed on {{ order.created_at|date:"M d, Y H:i" }}</p>
+  </div>
+
+  <!-- ORDER ITEMS -->
+  <section class="card">
+    <h3 class="text-xl font-semibold accent">🍴 Items Ordered</h3>
+    <div class="divider"></div>
+
+    {% for item in order.order_items.all %}
+      <div class="item-row">
+        <div>
+          <div class="font-medium">
+            {% if item.combo %} {{ item.combo.name }}
+            {% elif item.custom_combo %} {{ item.custom_combo.title }}
+            {% elif item.menu_item %} {{ item.menu_item.name }}
+            {% else %} Custom Item {% endif %}
+          </div>
+          <div class="text-xs text-gray-400">Qty: {{ item.quantity }}</div>
+          {% if item.addons %}
+            <div class="addon">
+              Addons: 
+              {% for key, value in item.addons.items %}
+                {{ key }} (+₹{{ value }})
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="font-semibold">₹{{ item.total_price }}</div>
+      </div>
+    {% empty %}
+      <p class="text-gray-400">No items in this order.</p>
+    {% endfor %}
+  </section>
+
+  <!-- TOTALS + PAYMENT -->
+  <section class="card">
+    <h3 class="text-xl font-semibold accent">💰 Payment Details</h3>
+    <div class="divider"></div>
+
+    <div class="flex justify-between text-gray-400 mb-2">
+      <span>Subtotal</span>
+      <span>₹{{ order.total_price }}</span>
+    </div>
+    <div class="flex justify-between text-gray-400 mb-2">
+      <span>Payment Method</span>
+      <span>{{ order.get_payment_method_display }}</span>
+    </div>
+    <div class="flex justify-between font-bold text-lg mt-4">
+      <span>Total</span>
+      <span>₹{{ order.total_price }}</span>
+    </div>
+  </section>
+
+  <!-- DELIVERY INFO -->
+  <section class="card">
+    <h3 class="text-xl font-semibold accent">🚚 Delivery Details</h3>
+    <div class="divider"></div>
+    <div class="text-gray-300 space-y-1">
+      <div><strong>Name:</strong> {{ order.customer.user.username }}</div>
+      <div><strong>Phone:</strong> {{ order.customer.phone|default:"Not provided" }}</div>
+      <div><strong>Address:</strong> {{ order.address|default:"Not provided" }}</div>
+      <div><strong>Instructions:</strong> {{ order.special_instructions|default:"-" }}</div>
+    </div>
+  </section>
+
+  <!-- TRACKING STATUS -->
+  <section class="card">
+    <h3 class="text-xl font-semibold accent">📍 Order Tracking</h3>
+    <div class="divider"></div>
+
+    <div class="flex justify-between mt-4">
+      <div class="tracking-step {% if order.status == 'pending' or order.status == 'confirmed' or order.status == 'delivered' %}done{% endif %}">
+        📝 Pending
+      </div>
+      <div class="tracking-step {% if order.status == 'confirmed' or order.status == 'delivered' %}done{% endif %}">
+        ✅ Confirmed
+      </div>
+      <div class="tracking-step {% if order.status == 'delivered' %}done{% endif %}">
+        🚚 Delivered
+      </div>
+      <div class="tracking-step {% if order.status == 'cancelled' %}active{% endif %}">
+        ❌ Cancelled
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT / ACTIONS -->
+  <section class="card text-center">
+    <h3 class="text-xl font-semibold accent">📞 Need Help?</h3>
+    <p class="text-gray-400 mt-2">For questions about your order, contact our support team.</p>
+    <div class="mt-4">
+      <a href="tel:+919876543210" class="btn">Call Support</a>
+      <a href="{% url 'core:home' %}" class="btn ml-3">Back to Home</a>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

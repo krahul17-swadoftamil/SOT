@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — Swad of Tamil</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b0b0b;       /* Matte black */
+      --accent: #ff6a00;   /* Dark orange */
+      --muted: #e0e0e0;    /* Light muted text */
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.6);
+      --maxwidth: 1100px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Rubik', system-ui, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: var(--maxwidth);
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Top Navigation */
+    .topnav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff6a00, #ff8a3d);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff;
+      box-shadow: inset 0 -4px 8px rgba(255,255,255,0.08);
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      color: #fff;
+      letter-spacing: 0.6px;
+    }
+    .navlinks a {
+      margin-left: 18px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .navlinks a.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .hero h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* Contact Form */
+    .contact-box {
+      padding: 30px;
+      background: rgba(255,255,255,0.02);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    form {
+      display: grid;
+      gap: 18px;
+    }
+    label {
+      font-size: 14px;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border 0.3s ease, background 0.3s ease;
+    }
+    input:focus, textarea:focus {
+      border: 1px solid var(--accent);
+      background: rgba(255,255,255,0.08);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #ff6a00, #ff8a3d);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255,106,0,0.5);
+    }
+
+    /* Contact Info */
+    .info {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .info p {
+      margin: 6px 0;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 60px;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Nav -->
+    <div class="topnav">
+      <div class="brand">
+        <div class="logo">SoT</div>
+        <h1>Swad of Tamil</h1>
+      </div>
+      <div class="navlinks">
+        <a href="{% url 'core:home' %}">Home</a>
+        <a href="{% url 'core:brand_story' %}">About</a>
+        <a href="{% url 'core:mission' %}">Our Mission</a>
+        <a href="{% url 'core:contact_view' %}" class="active">Contact</a>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+      <h2>Contact Us</h2>
+      <p>Have a question, feedback, or want to collaborate? We’d love to hear from you. Send us a message below or reach us through our contact info.</p>
+    </section>
+
+    <!-- Contact Form -->
+    <div class="contact-box">
+      <form method="POST">
+        {% csrf_token %}
+        <label for="name">Your Name</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="email">Email Address</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="message">Message</label>
+        <textarea name="message" id="message" required></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="info">
+      <p>📧 Email: krahul17@gmail.com</p>
+      <p>📞 Phone: +91 98765 43210</p>
+      <p>📍 Chennai, Tamil Nadu</p>
+    </div>
+
+    <footer>
+      © {{ now|date:"Y" }} Swad of Tamil • Authentic Flavours, Modern Care
+    </footer>
+  </div>
+</body>
+</html>

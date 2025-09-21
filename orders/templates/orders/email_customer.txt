@@ -1,0 +1,24 @@
+Hi {{ order.customer_name }},
+
+Thanks for your order at Swad of Tamil!
+
+Order #{{ order.id }}
+Placed: {{ order.created_at }}
+
+Items:
+{% for item in order.items.all %}
+- {{ item.name }} x {{ item.quantity }} = ₹{{ item.line_total }}
+{% endfor %}
+
+Subtotal: ₹{{ order.subtotal }}
+GST ({{ order.gst_percent }}%): ₹{{ order.gst_amount }}
+Total: ₹{{ order.total_price }}
+
+Delivery Address:
+{{ order.delivery_address|default:"(not provided)" }}
+Phone: {{ order.customer_phone }}
+
+We'll contact you if we need anything else.
+
+Regards,
+Swad of Tamil

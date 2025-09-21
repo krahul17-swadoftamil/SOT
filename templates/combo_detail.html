@@ -1,0 +1,76 @@
+{# templates/vendors/combo_detail.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ combo.name }} - Combo Details{% endblock %}
+
+{% block content %}
+<div class="combo-detail-page bg-black text-white min-h-screen py-10">
+  
+  <!-- Combo Header -->
+  <div class="max-w-5xl mx-auto text-center">
+    <h1 class="text-4xl md:text-5xl font-bold text-orange-500 animate__animated animate__fadeInDown">
+      🍴 {{ combo.name }}
+    </h1>
+    <p class="text-gray-300 mt-2 animate__animated animate__fadeInUp">{{ combo.description }}</p>
+  </div>
+
+  <!-- Combo Image -->
+  <div class="max-w-4xl mx-auto mt-10">
+    {% if combo.image %}
+      <img src="{{ combo.image.url }}" alt="{{ combo.name }}"
+        class="w-full h-96 object-cover rounded-3xl shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-orange-500/50 animate__animated animate__zoomIn">
+    {% else %}
+      <div class="bg-gray-800 h-96 flex items-center justify-center rounded-3xl">
+        <span class="text-gray-500">No image available</span>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Price & Order -->
+  <div class="max-w-4xl mx-auto mt-8 text-center">
+    <div class="inline-block bg-gradient-to-r from-orange-600 to-orange-400 text-black px-8 py-4 rounded-full shadow-xl text-xl font-bold animate__animated animate__pulse animate__infinite">
+      ₹{{ combo.price }}
+    </div>
+    <div class="mt-6">
+      <a href="{% url 'orders:create_order' combo.vendor.code %}"
+        class="inline-block bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-2xl font-semibold shadow-lg transform transition hover:scale-105">
+        🛒 Order Now
+      </a>
+    </div>
+  </div>
+
+  <!-- Vendor Info -->
+  <div class="max-w-5xl mx-auto mt-12 bg-gray-900 rounded-2xl shadow-lg p-8 animate__animated animate__fadeInUp">
+    <h2 class="text-2xl font-bold text-orange-400 mb-4">👨‍🍳 Vendor Information</h2>
+    <p><strong>Name:</strong> {{ combo.vendor.name }}</p>
+    <p><strong>City:</strong> {{ combo.vendor.city }}</p>
+    <p><strong>Pincode:</strong> {{ combo.vendor.pincode }}</p>
+    <p><strong>Phone:</strong> {{ combo.vendor.phone }}</p>
+  </div>
+
+  <!-- Included Menu Items -->
+  <div class="max-w-5xl mx-auto mt-12 bg-gray-800 rounded-2xl shadow-lg p-8 animate__animated animate__fadeInUp">
+    <h2 class="text-2xl font-bold text-orange-400 mb-6">🥗 Items Included</h2>
+    {% if combo.menu_items.all %}
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for item in combo.menu_items.all %}
+          <li class="flex items-center bg-gray-900 p-4 rounded-xl shadow-md transform transition hover:scale-105 hover:shadow-orange-400/40">
+            <span class="text-lg">🍽️ {{ item.name }}</span>
+            <span class="ml-auto text-gray-400">{{ item.price }} ₹</span>
+          </li>
+        {% empty %}
+          <li class="text-gray-400">No items linked to this combo yet.</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-400">No items found.</p>
+    {% endif %}
+  </div>
+
+  <!-- Floating Decoration -->
+  <div class="absolute top-20 right-10 opacity-20 animate-bounce">
+    <img src="{% static 'images/food-icon.png' %}" alt="Decoration" class="w-24">
+  </div>
+</div>
+{% endblock %}

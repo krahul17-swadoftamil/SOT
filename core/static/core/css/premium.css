@@ -1,0 +1,66 @@
+/* core/static/core/css/premium.css */
+
+/* Theme variables */
+:root{
+  --bg: #000000;
+  --panel: #111111;
+  --accent: #ff6600;
+  --accent-2: #ff8800;
+  --text: #ffffff;
+  --muted: #bdbdbd;
+}
+
+/* Page background & text */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Form inputs */
+.premium-input,
+.premium-textarea,
+.form-control.premium-input,
+.form-control.premium-textarea {
+  background-color: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+/* Textarea tweak */
+.premium-textarea { min-height: 120px; resize: vertical; }
+
+/* Focus state */
+.premium-input:focus,
+.premium-textarea:focus {
+  outline: none;
+  border-color: var(--accent-2);
+  box-shadow: 0 0 10px rgba(255,136,0,.12);
+}
+
+/* Labels and form group */
+.form-group { margin-bottom: 12px; }
+.form-group label { display:block; margin-bottom:6px; color: var(--muted); font-size: .95rem; }
+
+/* Buttons */
+.premium-btn {
+  background-color: var(--accent);
+  color: var(--text);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .08s ease, background-color .12s ease;
+}
+.premium-btn:hover { background-color: var(--accent-2); transform: translateY(-1px); }
+
+/* Small helper */
+.form-errors { color: #ff9999; font-size: .9rem; margin-top: 4px; }

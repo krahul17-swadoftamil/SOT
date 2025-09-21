@@ -1,0 +1,230 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — Swad of Tamil</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b0b0b;       /* Matte black */
+      --accent: #ff6a00;   /* Dark orange */
+      --accent-light: #ff944d;
+      --muted: #e0e0e0;
+      --radius: 18px;
+      --shadow: 0 12px 28px rgba(0,0,0,0.65);
+      --maxwidth: 1100px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Rubik', sans-serif;
+      background: var(--bg);
+      color: #fff;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: var(--maxwidth);
+      margin: 0 auto;
+      padding: 50px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* 🌟 Floating Background Graphics */
+    .floating-graphic {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, var(--accent), transparent 70%);
+      border-radius: 50%;
+      opacity: 0.15;
+      animation: float 10s infinite ease-in-out;
+      z-index: 1;
+    }
+    .graphic1 { top: 10%; left: 8%; animation-delay: 0s; }
+    .graphic2 { top: 40%; right: 12%; animation-delay: 3s; }
+    .graphic3 { bottom: 15%; left: 15%; animation-delay: 6s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-30px) rotate(15deg); }
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      display: flex; justify-content: center; align-items: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 16px; color: #fff;
+      box-shadow: inset 0 -4px 8px rgba(255,255,255,0.08);
+    }
+    .brand h1 { font-size: 18px; margin: 0; letter-spacing: 0.6px; }
+    .navlinks { display: flex; gap: 20px; }
+    .navlinks a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 15px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    .navlinks a:hover { color: #fff; background: rgba(255,106,0,0.1); }
+    .navlinks a.active { color: var(--accent); font-weight: 600; border-bottom: 2px solid var(--accent); }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin: 60px 0 50px;
+      animation: fadeIn 1.2s ease forwards;
+    }
+    .hero h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      color: var(--accent);
+      margin-bottom: 16px;
+      text-shadow: 0 0 12px rgba(255,106,0,0.4);
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 1s ease 0.6s forwards;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 50px;
+      padding: 28px;
+      background: rgba(255,255,255,0.03);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+    .section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+    .section p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .section.show { opacity: 1; transform: translateY(0); }
+
+    /* Footer */
+    footer {
+      margin-top: 60px;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Animations */
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+    @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+
+    @media (max-width: 768px) {
+      .hero h2 { font-size: 28px; }
+      .section { padding: 20px; }
+      .navlinks { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="brand">
+      <div class="logo">SoT</div>
+      <h1>Swad of Tamil</h1>
+    </div>
+    <div class="navlinks">
+      <a href="{% url 'core:home' %}">Home</a>
+      <a href="{% url 'core:brand_story' %}" class="active">About</a>
+      <a href="{% url 'core:mission' %}">Our Mission</a>
+      <a href="{% url 'core:products' %}">Products</a>
+      <a href="{% url 'core:contact_view' %}">Contact</a>
+    </div>
+  </div>
+
+  <!-- Floating Graphics -->
+  <div class="floating-graphic graphic1"></div>
+  <div class="floating-graphic graphic2"></div>
+  <div class="floating-graphic graphic3"></div>
+
+  <div class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <h2>About Swad of Tamil</h2>
+      <p>Swad of Tamil is more than food — it’s a celebration of Tamil heritage, handmade recipes, and the warmth of home-style cooking. We curate authentic South Indian combos that bring back memories, crafted hygienically for today’s lifestyle.</p>
+    </section>
+
+    <!-- Our Story -->
+    <section class="section">
+      <h3>Our Story</h3>
+      <p>Founded with a passion to preserve Tamil flavours, Swad of Tamil connects people with premium local vendors who carry the legacy of authentic recipes. Every idli, chutney, and sambar is made with care — a taste of Tamil Nadu delivered fresh to your plate.</p>
+    </section>
+
+    <!-- What We Do -->
+    <section class="section">
+      <h3>What We Do</h3>
+      <p>We handpick trusted vendors, ensure hygienic preparation, and design premium combos for families, friends, and events. From quick solo meals to grand feasts, Swad of Tamil is about making every bite special, nostalgic, and wholesome.</p>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="section">
+      <h3>Why Choose Us</h3>
+      <p>✔ Authentic Tamil recipes passed through generations.<br>
+         ✔ Hygienic, premium quality, and freshly made.<br>
+         ✔ Vendor-first approach — empowering local kitchens.<br>
+         ✔ A true taste of Tamil culture, with love in every serving.</p>
+    </section>
+
+    <footer>
+      © {{ now|date:"Y" }} Swad of Tamil • Authentic Flavours, Modern Care
+    </footer>
+  </div>
+
+  <!-- JS for scroll reveal -->
+  <script>
+    const sections = document.querySelectorAll('.section');
+    const revealOnScroll = () => {
+      const trigger = window.innerHeight * 0.85;
+      sections.forEach(sec => {
+        const top = sec.getBoundingClientRect().top;
+        if (top < trigger) sec.classList.add('show');
+      });
+    };
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll();
+  </script>
+</body>
+</html>

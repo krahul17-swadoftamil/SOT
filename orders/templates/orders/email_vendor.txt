@@ -1,0 +1,18 @@
+New order received!
+
+Order #{{ order.id }}
+Customer: {{ order.customer_name }} ({{ order.customer_phone }})
+Delivery: {{ order.delivery_address|default:"(not provided)" }}
+
+Items:
+{% for item in order.items.all %}
+- {{ item.name }} x {{ item.quantity }} = ₹{{ item.line_total }}
+{% endfor %}
+
+Subtotal: ₹{{ order.subtotal }}
+GST: ₹{{ order.gst_amount }}
+Total: ₹{{ order.total_price }}
+
+Please prepare and update the order status in admin.
+
+-- Swad of Tamil

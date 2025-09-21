@@ -1,0 +1,294 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Swad of Tamil — Home</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'images/logo.png' %}" />
+
+  <style>
+    /* =============== VARIABLES =============== */
+    :root {
+      --bg-dark: #0f0f0f;
+      --bg-black: #000;
+      --text-muted: #cfcfcf;
+      --accent: #ff9900;
+      --gold: #FFD700;
+      --card-bg: linear-gradient(145deg,#2a2a2a,#1a1a1a);
+      --glass: rgba(255,255,255,0.04);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    body {
+      background: linear-gradient(180deg, var(--bg-dark), var(--bg-black));
+      font-family:'Poppins','Roboto',sans-serif;
+      color:#fff;
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;height:auto;display:block}
+
+    .page { max-width:1400px; margin:0 auto; padding:20px }
+
+    /* =============== NAVBAR =============== */
+    .navbar {
+      display:flex;justify-content:space-between;align-items:center;
+      padding:12px 18px;margin-bottom:28px;
+      background:rgba(255,255,255,0.03);
+      border-radius:14px;backdrop-filter:blur(4px);
+      box-shadow:0 6px 20px rgba(0,0,0,0.6);
+    }
+    .brand { display:flex;align-items:center;gap:12px }
+    .brand .logo {
+      width:46px;height:46px;border-radius:10px;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
+      background:var(--glass);
+    }
+    .brand .title { font-size:1.15rem;font-weight:700;color:var(--accent) }
+    .brand .subtitle { font-size:0.8rem;color:var(--text-muted) }
+
+    .nav-right { display:flex;gap:10px }
+    .nav-btn {
+      padding:8px 14px;border-radius:18px;font-size:0.85rem;font-weight:600;
+      background:linear-gradient(180deg,#0b0b0b,#111);color:#fff;
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:inset 0 -2px 0 rgba(255,255,255,0.02),0 6px 18px rgba(0,0,0,0.5);
+      transition:all .25s ease;
+    }
+    .nav-btn:hover{transform:translateY(-2px) scale(1.03)}
+    .nav-btn.gold { border:1px solid rgba(255,215,0,0.18) }
+
+    /* =============== HEADER =============== */
+    .header { text-align:center;margin-bottom:24px }
+    .header h1 { color:var(--gold);font-size:2.2rem;margin-bottom:8px }
+    .header p { color:#d7d7d7;max-width:800px;margin:0 auto }
+
+    .search-box {
+      margin:18px auto;display:flex;align-items:center;gap:8px;
+      max-width:720px;background:#141414;
+      border-radius:999px;padding:8px 14px;
+      border:1px solid rgba(255,255,255,0.04);
+    }
+    .search-box input {
+      flex:1;background:transparent;border:none;outline:none;
+      color:#fff;padding:12px;font-size:1rem;
+    }
+    .search-box button {
+      background:linear-gradient(45deg,var(--accent),#ffb24a);
+      border:none;border-radius:999px;padding:10px 18px;
+      font-weight:700;color:#000;cursor:pointer;
+    }
+
+    /* =============== COMBOS =============== */
+    .combos { margin-top:36px;padding:24px;border-radius:16px;background:rgba(255,255,255,0.02) }
+    .section-title { text-align:center;color:var(--gold);font-size:1.9rem;font-weight:800;margin-bottom:20px }
+    .combo-cards { display:flex;flex-wrap:wrap;gap:22px;justify-content:center }
+
+    .combo {
+      width:320px;background:var(--card-bg);border-radius:16px;padding:16px;
+      border:1px solid rgba(255,215,0,0.06);
+      transition:all .3s ease;box-shadow:0 6px 22px rgba(0,0,0,0.6);
+    }
+    .combo:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.7)}
+    .combo-media {height:180px;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#222}
+    .combo-title {color:var(--gold);font-weight:700;margin-bottom:6px}
+    .combo-desc {color:#ddd;font-size:0.9rem;margin-bottom:8px}
+    .combo-price {color:#ffb24a;font-weight:800;margin-bottom:10px}
+
+    .combo select {
+      width:100%;padding:10px;border-radius:12px;background:#111;color:#fff;
+      border:1px solid rgba(255,255,255,0.06);margin-bottom:10px;
+    }
+    .btn-row{display:flex;gap:10px;justify-content:center}
+    .btn-primary {
+      padding:10px 14px;border-radius:999px;font-weight:700;
+      background:linear-gradient(45deg,var(--accent),#ffb24a);
+      color:#000;border:none;cursor:pointer;
+    }
+    .btn-ghost {
+      padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.06);
+      background:transparent;color:#fff;cursor:pointer;
+    }
+
+    /* =============== VENDOR CAROUSEL =============== */
+    .vendors { margin-top:40px;padding:28px;border-radius:16px;background:rgba(255,255,255,0.02) }
+    .carousel-wrap { display:flex;align-items:center;gap:14px }
+    .track { display:flex;gap:18px;overflow-x:auto;scroll-behavior:smooth }
+    .track::-webkit-scrollbar{display:none}
+    .carousel-btn {
+      width:44px;height:44px;border:none;border-radius:50%;
+      background:linear-gradient(180deg,var(--accent),#ffb24a);
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+    }
+    .vendor-card {
+      min-width:280px;background:linear-gradient(145deg,#222,#111);
+      border-radius:14px;padding:14px;text-align:center;
+      border:1px solid rgba(255,215,0,0.06);
+      transition:all .2s ease;
+    }
+    .vendor-card:hover{transform:translateY(-6px) scale(1.02)}
+    .vendor-card img{width:100%;height:160px;object-fit:cover;border-radius:10px}
+    .vendor-card h4{color:var(--gold);margin:8px 0}
+    .vendor-card .meta{color:#ccc;font-size:0.9rem;margin-bottom:6px}
+    .vendor-card .rating{color:#FFD700;margin-bottom:6px}
+    .vendor-actions{display:flex;gap:8px;justify-content:center;margin-top:8px}
+    .vendor-actions a{padding:8px 12px;border-radius:12px;font-weight:700}
+    .menu{background:linear-gradient(45deg,var(--accent),#ffb24a);color:#000}
+    .profile{border:1px solid rgba(255,255,255,0.06);color:#fff}
+
+    /* =============== ABOUT & FOOTER =============== */
+    .about {margin-top:40px;text-align:center}
+    .about h3{color:var(--gold);margin-bottom:8px}
+    .about p{color:#e9e9e9;max-width:900px;margin:0 auto}
+
+    .footer {margin-top:28px;padding:20px;text-align:center;color:#aaa;font-size:0.9rem}
+    .footer a{color:#ffd77a}
+
+    @media(max-width:900px){.combo{width:90%}}
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="brand">
+        <div class="logo"><img src="{% static 'images/logo.png' %}" alt="Swad of Tamil"></div>
+        <div>
+          <div class="title">Swad of Tamil</div>
+          <div class="subtitle">Authensdstic South Indian Combos</div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a class="nav-btn gold" href="/vendors/"><i class="fas fa-store"></i> Vendors</a>
+        <a class="nav-btn" href="/contact/"><i class="fas fa-phone"></i> Contact</a>
+        <a class="nav-btn" href="/mission/"><i class="fas fa-bullseye"></i> Mission</a>
+        <a class="nav-btn" href="/brand-story/"><i class="fas fa-book"></i> Brand</a>
+      </div>
+    </nav>
+
+    <!-- HEADER -->
+    <header class="header">
+      <h1>✨ Premium South Indian Taste ✨</h1>
+      <p>Find authentic Tamil street vendors & order your favorite combos instantly — hot, fresh, and local.</p>
+      <form action="/search/" method="get" class="search-box">
+        <input type="text" name="query" placeholder="Enter city or pincode" value="{{ query|default_if_none:'' }}">
+        <button type="submit">Search</button>
+      </form>
+    </header>
+
+    <!-- COMBOS -->
+    <section class="combos">
+      <div class="section-title">Premium South Indian Combos</div>
+      <div class="combo-cards">
+        {% for combo in combos %}
+        <article class="combo">
+          <div class="combo-media">
+            {% if combo.image %}
+              <img src="{{ combo.image.url }}" alt="{{ combo.name }}">
+            {% else %}
+              <img src="{% static 'images/placeholder.jpg' %}" alt="No image">
+            {% endif %}
+          </div>
+          <div class="combo-title">{{ combo.name }}</div>
+          <div class="combo-desc">{{ combo.description|default:"Delicious combo" }}</div>
+          <div class="combo-price">₹{{ combo.price }}</div>
+
+          <select id="vendor-select-{{ combo.id }}" onchange="updateCheckout(this)" data-combo="{{ combo.id }}">
+            <option value="">-- Choose Vendor --</option>
+            {% for vendor in combo.vendors.all %}
+              <option value="/orders/create/{{ vendor.code }}/?combo_id={{ combo.id }}">{{ vendor.name }} — {{ vendor.city }}</option>
+            {% endfor %}
+          </select>
+
+          <div class="btn-row">
+            <button class="btn-primary" id="checkout-btn-{{ combo.id }}" onclick="quickCheckout('{{ combo.id }}')">🛒 Buy Now</button>
+            <a class="btn-ghost" href="/combos/{{ combo.id }}/">Details</a>
+          </div>
+        </article>
+        {% empty %}
+        <p>No combos available.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- VENDORS -->
+    <section class="vendors">
+      <div class="section-title">Available Now — Vendors</div>
+      <div class="carousel-wrap">
+        <button class="carousel-btn" id="carousel-prev"><i class="fas fa-chevron-left"></i></button>
+        <div class="track" id="vendor-track">
+          {% for vendor in vendors %}
+          <div class="vendor-card">
+            <div class="photo">
+              {% if vendor.image %}
+                <img src="{{ vendor.image.url }}" alt="{{ vendor.name }}">
+              {% else %}
+                <img src="{% static 'images/vendor-placeholder.jpg' %}" alt="Vendor">
+              {% endif %}
+            </div>
+            <h4>{{ vendor.name }}</h4>
+            <div class="meta">{{ vendor.city }} · {{ vendor.pincode }}</div>
+            <div class="rating">
+              {% with r=vendor.rating|default_if_none:0 %}
+                {% for i in "12345" %}
+                  {% if forloop.counter <= r %}★{% else %}☆{% endif %}
+                {% endfor %}
+              {% endwith %}
+            </div>
+            <div class="meta">{{ vendor.phone }}</div>
+            <div class="vendor-actions">
+              <a class="menu" href="/orders/create/{{ vendor.code }}/">Menu</a>
+              <a class="profile" href="/vendors/{{ vendor.id }}/">Profile</a>
+            </div>
+          </div>
+          {% empty %}
+          <p>No vendors right now.</p>
+          {% endfor %}
+        </div>
+        <button class="carousel-btn" id="carousel-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about">
+      <h3>About Swad of Tamil</h3>
+      <p>Swad of Tamil brings authentic Tamil flavors — Idli, Vada, Dosa and more — from trusted local vendors to your doorstep. We support small entrepreneurs using fresh, traditional recipes.</p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      © {{ now.year|default:2025 }} Swad of Tamil · Built with ❤️ · <a href="/contact/">Contact</a>
+    </footer>
+
+  </div>
+
+  <!-- =============== JS =============== -->
+  <script>
+    function updateCheckout(selectEl){
+      var comboId = selectEl.dataset.combo;
+      var btn = document.getElementById("checkout-btn-" + comboId);
+      btn.dataset.url = selectEl.value;
+    }
+    function quickCheckout(comboId){
+      var btn = document.getElementById("checkout-btn-" + comboId);
+      if(!btn.dataset.url){alert("Please choose a vendor first.");return;}
+      window.location.href = btn.dataset.url;
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){
+      var track=document.getElementById("vendor-track");
+      document.getElementById("carousel-next").onclick=()=>track.scrollBy({left:320,behavior:"smooth"});
+      document.getElementById("carousel-prev").onclick=()=>track.scrollBy({left:-320,behavior:"smooth"});
+    });
+  </script>
+</body>
+</html>

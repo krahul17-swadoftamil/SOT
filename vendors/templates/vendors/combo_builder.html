@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Build Your Combo - {{ vendor.name }}{% endblock %}
+
+{% block content %}
+<div class="builder-dashboard container-fluid py-5" style="max-width:1400px;">
+
+  <!-- Vendor Header -->
+  <div class="text-center mb-5">
+    <h1 class="fw-bold" style="color:#ff7f27; font-size:2.5rem; animation: fadeIn 1s;">
+      🍽️ Build Your Combo with <span style="color:#fff;">{{ vendor.name }}</span>
+    </h1>
+    <p class="text-muted">Customize your meal with authentic Tamil flavors. ✨</p>
+  </div>
+
+  <!-- Preset Combo Carousel -->
+  {% if combos %}
+  <div id="comboCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-inner rounded-3 shadow-lg">
+      {% for combo in combos %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <img src="{{ combo.image.url }}" class="d-block w-100 rounded-3" alt="{{ combo.name }}" style="max-height:400px; object-fit:cover;">
+        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+          <h5 class="text-warning">{{ combo.name }}</h5>
+          <p class="text-light small">{{ combo.description|default:"A delightful Tamil combo" }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#comboCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#comboCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+  {% endif %}
+
+  <!-- Builder + Summary Grid -->
+  <div class="row g-4">
+    <!-- Menu Items -->
+    <div class="col-lg-8">
+      <div id="menu-container" 
+           data-vendor-code="{{ vendor.code }}" 
+           data-create-url="{% url 'orders:create_custom_order' vendor.code %}">
+        {% for item in items %}
+        <div class="menu-row card bg-dark border-0 shadow-sm mb-4 p-3" 
+             data-item-id="{{ item.id }}" 
+             data-price="{{ item.price }}" 
+             data-name="{{ item.name }}">
+          <div class="d-flex gap-3 align-items-center">
+            <!-- Item Image -->
+            <div style="min-width:120px;">
+              <img src="{{ item.image.url }}" alt="{{ item.name }}" 
+                   class="rounded-3" 
+                   style="width:120px; height:120px; object-fit:cover;">
+            </div>
+            <!-- Item Details -->
+            <div class="flex-grow-1">
+              <h4 class="mb-1 text-warning">{{ item.name }} 🍛</h4>
+              <p class="text-muted small mb-1">{{ item.description|default:"Delicious & fresh Tamil delicacy" }}</p>
+              <p class="fw-bold text-light">₹{{ item.price }}</p>
+            </div>
+            <!-- Controls -->
+            <div class="text-end">
+              <div class="qty-controls d-flex align-items-center justify-content-end gap-2">
+                <button class="qty-btn" data-action="minus">➖</button>
+                <span id="qty-{{ item.id }}" class="item-qty fw-bold text-white">0</span>
+                <button class="qty-btn" data-action="plus">➕</button>
+              </div>
+              <p class="mt-2 small text-light">Line: 
+                <span id="line-{{ item.id }}" class="fw-bold text-warning">₹0.00</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">⚠️ No items found for this vendor.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="col-lg-4">
+      <div class="card bg-dark border-0 shadow-lg p-4 sticky-top" style="top:80px;">
+        <h4 class="text-white mb-3">🧾 Order Summary</h4>
+        <ul id="order-items" class="list-unstyled text-light small mb-4"></ul>
+        <hr class="border-secondary">
+        <h3 class="text-white">Total: 
+          <span id="total-price" class="text-warning">₹0.00</span>
+        </h3>
+        <button id="place-order" 
+                class="btn w-100 mt-4 fw-bold" 
+                style="background:linear-gradient(45deg,#ff7f27,#ffb347); border:none; border-radius:12px; font-size:1.1rem;">
+          🚀 Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Animations + Styles -->
+<style>
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(-20px);}
+  to {opacity:1; transform: translateY(0);}
+}
+.qty-btn {
+  background:#ff7f27; 
+  color:#fff; 
+  border:none; 
+  border-radius:8px; 
+  padding:6px 12px; 
+  cursor:pointer; 
+  font-weight:bold; 
+  transition: all 0.2s ease;
+}
+.qty-btn:hover { background:#ffb347; }
+.menu-row { animation: fadeIn 0.5s; }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/combo_builder.js' %}"></script>
+{% endblock %}

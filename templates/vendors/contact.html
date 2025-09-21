@@ -1,0 +1,359 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — Swad of Tamil</title>
+
+  <!-- Fonts + Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script> <!-- optional FA: replace with your kit id or remove -->
+
+  <!-- Lottie (for elegant micro-animations) -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <style>
+    :root{
+      --bg: #0b0b0b;            /* matte black */
+      --accent: #ff6a00;        /* dark orange */
+      --muted: #cfcfcf;         /* bright white small text */
+      --glass: rgba(255,255,255,0.04);
+      --card-glow: rgba(255,106,0,0.12);
+      --radius: 14px;
+      --maxwidth: 1100px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,106,0,0.03), transparent 6%),
+                  radial-gradient(900px 400px at 90% 90%, rgba(255,106,0,0.02), transparent 8%),
+                  var(--bg);
+      color: #fff;
+      font-family: 'Rubik', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:40px 20px;
+      box-sizing:border-box;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .container{
+      width:100%;
+      max-width:var(--maxwidth);
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:36px;
+      align-items:start;
+    }
+
+    /* Top nav (simple) */
+    .topnav{
+      grid-column: 1 / -1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:6px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .logo {
+      width:52px;height:52px;border-radius:12px;
+      background: linear-gradient(135deg,#ff6a00,#ff8a3d);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow: 0 6px 18px rgba(255,106,0,0.12), inset 0 -6px 18px rgba(255,255,255,0.02);
+      font-family: 'Playfair Display', serif;
+      font-size:18px;font-weight:700;color:white;
+    }
+    .brand h1{ margin:0; font-size:18px; letter-spacing:0.6px; color:#fff;}
+    .navlinks a{
+      color:var(--muted);
+      margin-left:18px;
+      text-decoration:none;
+      font-size:14px;
+    }
+    .navlinks a.vendor{
+      background: linear-gradient(90deg, rgba(255,106,0,0.14), rgba(255,106,0,0.06));
+      padding:8px 12px;
+      border-radius:10px;
+      color:white;
+      font-weight:600;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    /* Left: contact form card (floating) */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--radius);
+      padding:28px;
+      box-shadow: var(--shadow), 0 0 40px var(--card-glow);
+      backdrop-filter: blur(6px);
+      position:relative;
+      overflow:visible;
+    }
+
+    .floating-decor{
+      position:absolute; right:-40px; top:-28px; transform:rotate(10deg);
+      filter: drop-shadow(0 6px 18px rgba(255,106,0,0.08));
+      opacity:0.95;
+    }
+
+    .card h2{
+      margin:0 0 8px 0;
+      color:var(--accent);
+      font-family:'Playfair Display', serif;
+      font-size:24px;
+      letter-spacing:0.6px;
+    }
+    .card p.lead{ margin:0 0 18px 0; color:var(--muted); font-size:14px; }
+
+    /* form */
+    .form-grid { display:grid; gap:12px; }
+    .input{
+      background: transparent;
+      border:1px solid rgba(255,255,255,0.06);
+      padding:12px 14px;
+      border-radius:10px;
+      color: #fff;
+      outline:none;
+      font-size:14px;
+      box-shadow: inset 0 -6px 12px rgba(255,255,255,0.01);
+    }
+    .input:focus{
+      border-color: var(--accent);
+      box-shadow: 0 8px 30px rgba(255,106,0,0.07), inset 0 -4px 12px rgba(255,255,255,0.02);
+    }
+    textarea.input { min-height:120px; resize:vertical; }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      background: linear-gradient(90deg, var(--accent), #ff8b3f);
+      padding:12px 16px;
+      border-radius:12px;
+      border:none;
+      color:white;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 10px 30px rgba(255,106,0,0.12);
+    }
+    .btn .emoji{ font-size:18px; transform:translateY(1px); }
+
+    .meta-row{ display:flex; gap:10px; align-items:center; margin-top:12px; color:var(--muted); font-size:13px; }
+
+    /* right column: info + Lottie + contact cards */
+    .aside{
+      position:relative;
+      align-self:flex-start;
+    }
+    .glass{
+      background:var(--glass);
+      border-radius:12px;
+      padding:18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .contact-item{ display:flex; gap:12px; align-items:center; margin-bottom:10px;}
+    .contact-item .ico{ width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+    .small-muted{ color:var(--muted); font-size:13px; }
+
+    /* floating sparkle animation (subtle) */
+    .sparkle{
+      position:absolute;
+      width:8px;height:8px;border-radius:50%;
+      background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.2));
+      box-shadow:0 6px 18px rgba(255,106,0,0.12);
+      opacity:0.15;
+      animation: floaty 6s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0% { transform: translateY(0) scale(0.8) rotate(0); opacity:0.12; }
+      50% { transform: translateY(-18px) scale(1.2) rotate(30deg); opacity:0.22; }
+      100% { transform: translateY(0) scale(0.9) rotate(0); opacity:0.12; }
+    }
+
+    /* responsive */
+    @media (max-width:980px){
+      .container{ grid-template-columns: 1fr; padding-bottom:40px; gap:18px; }
+      .aside{ order:2; }
+      .topnav{ margin-bottom:18px; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+
+    <!-- Top nav -->
+    <div class="topnav">
+      <div class="brand">
+        <div class="logo">SᴏT</div>
+        <div>
+          <h1>Swad of Tamil</h1>
+          <div class="small-muted" style="font-size:12px;">Premium Tamil flavours • Hygienic • Handmade</div>
+        </div>
+      </div>
+
+      <div class="navlinks">
+        <a href="{% url 'core:home' %}">Home</a>
+        <a href="{% url 'core:brand_story' %}">Brand Story</a>
+        <a href="{% url 'core:mission' %}">Our Mission</a>
+        <a href="{% url 'vendors:home' %}" class="vendor">Vendors 🔍</a>
+      </div>
+    </div>
+
+    <!-- Left: Form card -->
+    <section class="card" aria-labelledby="contact-title">
+      <!-- decorative floating Lottie -->
+      <div class="floating-decor" aria-hidden="true">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json"  background="transparent"  speed="1"  style="width:120px; height:120px;"  loop  autoplay></lottie-player>
+      </div>
+
+      <h2 id="contact-title">Get in touch ✨</h2>
+      <p class="lead">Have a question, vendor request, or want to collaborate? Drop a message — we'll reply within 24–48 hours. (Or faster if it's about combos! 🍛)</p>
+
+      <form method="post" action="{% url 'core:contact' %}" class="form-grid" onsubmit="return handleSubmit(event)">
+        {% csrf_token %}
+        <div style="display:flex; gap:12px;">
+          <input name="name" required placeholder="Your name" class="input" />
+          <input name="phone" pattern="[0-9+() -]{6,20}" placeholder="Phone / WhatsApp" class="input" />
+        </div>
+
+        <input name="email" type="email" placeholder="Email (optional)" class="input" />
+
+        <select name="enquiry_type" class="input" aria-label="Type">
+          <option value="general">General question</option>
+          <option value="vendor">Vendor onboarding</option>
+          <option value="collab">Collaboration / Partnership</option>
+          <option value="support">Order / Support</option>
+        </select>
+
+        <textarea name="message" placeholder="Write your message… (Tell us vendor code / order id if any)" class="input"></textarea>
+
+        <div style="display:flex; gap:12px; align-items:center; justify-content:space-between;">
+          <div class="meta-row">
+            <label style="display:flex; gap:8px; align-items:center;"><input type="checkbox" name="subscribe" /> <span class="small-muted">Subscribe for offers</span></label>
+          </div>
+
+          <button class="btn" type="submit">
+            <span class="emoji">📨</span>
+            <span>Send message</span>
+          </button>
+        </div>
+
+        <div id="form-status" class="small-muted" style="margin-top:6px;"></div>
+      </form>
+
+      <!-- subtle floating sparkles -->
+      <div class="sparkle" style="left:8%; top:-10%; width:10px;height:10px; animation-duration:5s;"></div>
+      <div class="sparkle" style="left:72%; top:8%; width:7px;height:7px; animation-duration:7s;"></div>
+      <div class="sparkle" style="left:42%; top:95%; width:6px;height:6px; animation-duration:6.5s;"></div>
+    </section>
+
+    <!-- Right: contact details + mini-cards -->
+    <aside class="aside">
+      <div class="glass" style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-weight:700; color:var(--accent); font-family:'Playfair Display',serif;">Contact Info</div>
+            <div class="small-muted" style="margin-top:6px;">We love sending recipes & smiles 😄</div>
+          </div>
+          <div style="font-size:20px;">🤝</div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div class="contact-item">
+            <div class="ico"><i class="fas fa-phone"></i></div>
+            <div>
+              <div style="font-weight:700">+91 98765 43210</div>
+              <div class="small-muted">Mon–Sat • 9:00–19:00 IST</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="ico"><i class="fas fa-envelope"></i></div>
+            <div>
+              <div style="font-weight:700">krahul17@gmail.com</div>
+              <div class="small-muted">General & press</div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="ico"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <div style="font-weight:700">Chandigarh, India</div>
+              <div class="small-muted">Pickup & vendor visits by appointment</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mini promo / vendor onboarding card -->
+      <div class="glass" style="margin-bottom:14px;">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="font-size:30px;">🍽️</div>
+          <div>
+            <div style="font-weight:700;">Vendor? Join Swad</div>
+            <div class="small-muted" style="margin-top:6px;">Fast onboarding • Premium badges • Local promos</div>
+            <div style="margin-top:10px;">
+              <a href="{% url 'vendors:apply' %}" class="btn" style="padding:8px 12px; font-size:13px;">Apply now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- small brand note -->
+      <div class="glass">
+        <div style="font-weight:700; color:var(--accent); font-family:'Playfair Display',serif;">A quick note</div>
+        <div class="small-muted" style="margin-top:8px;">Swad of Tamil curates hygienic, handmade Tamil combos — for home, office & events. Tell us what you want; we'll build it. ❤️</div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    // Tiny UX: simulate submit (replace with real AJAX or normal post in production)
+    function handleSubmit(e){
+      e.preventDefault();
+      const status = document.getElementById('form-status');
+      status.textContent = 'Sending…';
+      // Basic validation
+      const form = e.target;
+      const name = form.name.value.trim();
+      if(!name){
+        status.textContent = 'Please add your name 🙏';
+        return false;
+      }
+      // Simulated submission — replace with fetch to your endpoint or normal submit
+      setTimeout(()=> {
+        status.textContent = 'Message sent! We will reply within 24–48 hours. ✅';
+        form.reset();
+      }, 900);
+
+      // If you want to actually submit via HTTP POST (non-AJAX), comment out preventDefault and this function.
+      return false;
+    }
+
+    // optional: tiny sparkle movement randomizer (purely decorative)
+    (function seedSparkles(){
+      const sparkles = document.querySelectorAll('.sparkle');
+      sparkles.forEach((s, i) => {
+        const left = 5 + Math.random()*85;
+        const top = Math.random()*90;
+        s.style.left = left + '%';
+        s.style.top = top + '%';
+        s.style.animationDelay = (Math.random()*3)+'s';
+        s.style.opacity = (0.06 + Math.random()*0.18);
+      });
+    })();
+  </script>
+</body>
+</html>

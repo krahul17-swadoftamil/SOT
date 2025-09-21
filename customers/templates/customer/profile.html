@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-black text-white flex items-center justify-center p-6">
+  <div class="max-w-2xl w-full bg-gray-900 rounded-2xl shadow-2xl p-8 relative overflow-hidden">
+
+    <!-- Animated curved background -->
+    <div class="absolute -top-20 -right-20 w-60 h-60 bg-orange-600 opacity-20 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute -bottom-20 -left-20 w-72 h-72 bg-orange-500 opacity-10 rounded-full blur-3xl animate-spin-slow"></div>
+
+    <!-- Title -->
+    <h1 class="text-3xl font-bold text-orange-500 text-center mb-8 tracking-wide">
+      👤 Customer Profile
+    </h1>
+
+    <!-- Profile Card -->
+    <div class="space-y-6">
+      <!-- Username -->
+      <div class="bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-md">
+        <span class="text-orange-400 font-semibold">Username</span>
+        <span class="text-white">{{ customer.user.username }}</span>
+      </div>
+
+      <!-- Mobile -->
+      <div class="bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-md">
+        <span class="text-orange-400 font-semibold">📱 Mobile</span>
+        <span class="text-white">{{ customer.mobile|default:"Not Provided" }}</span>
+      </div>
+
+      <!-- City -->
+      <div class="bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-md">
+        <span class="text-orange-400 font-semibold">🏙 City</span>
+        <span class="text-white">{{ customer.city|default:"-" }}</span>
+      </div>
+
+      <!-- Pincode -->
+      <div class="bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-md">
+        <span class="text-orange-400 font-semibold">📍 Pincode</span>
+        <span class="text-white">{{ customer.pincode|default:"-" }}</span>
+      </div>
+
+      <!-- Address -->
+      <div class="bg-gray-800 rounded-xl p-4 shadow-md">
+        <span class="block text-orange-400 font-semibold mb-2">🏠 Address</span>
+        <p class="text-white">{{ customer.address|default:"No Address Provided" }}</p>
+      </div>
+
+      <!-- Created Date -->
+      <div class="bg-gray-800 rounded-xl p-4 flex justify-between items-center shadow-md">
+        <span class="text-orange-400 font-semibold">🗓 Joined</span>
+        <span class="text-white">{{ customer.created_at|date:"F d, Y" }}</span>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <div class="mt-8 text-center">
+      <a href="/" 
+         class="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105">
+        ⬅ Back to Home
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Extra animations -->
+<style>
+  .animate-spin-slow {
+    animation: spin 20s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+{% endblock %}

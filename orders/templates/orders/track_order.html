@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="background:#000; min-height:100vh; padding:40px; font-family:'Segoe UI', sans-serif; color:#fff;">
+
+  <!-- Order Title -->
+  <h2 style="color:#ff6600; font-size:34px; margin-bottom:30px; text-align:center; text-shadow:0 0 10px rgba(255,102,0,0.8); animation: glow 2s infinite alternate;">
+    🚚 Live Tracking – Order #{{ order.id }}
+  </h2>
+
+  <!-- Order Card -->
+  <div id="order-status-section"
+       style="background:linear-gradient(145deg, #111, #1a1a1a); padding:30px; border-radius:20px;
+              box-shadow:0 0 25px rgba(255,102,0,0.4), inset 0 0 15px rgba(255,102,0,0.2);
+              max-width:850px; margin:0 auto; position:relative; overflow:hidden;">
+
+    <!-- Floating Sparkles -->
+    <div style="position:absolute; top:0; left:0; width:100%; height:100%;
+                background:url('https://www.transparenttextures.com/patterns/stardust.png'); opacity:0.08;"></div>
+
+    <!-- Vendor Info -->
+    <h3 style="color:#ff6600; font-size:24px; margin-bottom:15px; position:relative; z-index:2;">
+      👨‍🍳 {{ order.vendor.name }}
+    </h3>
+    <p style="position:relative; z-index:2;"><b>Total:</b> ₹{{ order.total_price }}</p>
+    <p style="position:relative; z-index:2;"><b>Payment:</b> {{ order.get_payment_method_display }}</p>
+    <p style="position:relative; z-index:2;"><b>Placed:</b> {{ order.created_at|date:"M d, Y H:i" }}</p>
+
+    <!-- Live Status -->
+    <div id="status-container" style="margin-top:40px; position:relative; z-index:2; text-align:center;">
+      <p style="color:#aaa;">⏳ Fetching live status...</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div style="margin-top:50px; text-align:center;">
+    <a href="{% url 'orders:orders_list' %}" 
+       style="background:linear-gradient(90deg, #ff6600, #ff9900); color:#000;
+              padding:14px 28px; border-radius:30px; font-weight:bold; font-size:16px;
+              text-decoration:none; box-shadow:0 0 15px rgba(255,102,0,0.7);
+              transition:transform 0.3s ease, box-shadow 0.3s ease;">
+       🔎 View My Orders
+    </a>
+    <a href="{% url 'core:home' %}" 
+       style="background:#222; color:white; padding:14px 28px; border-radius:30px; font-weight:bold;
+              font-size:16px; text-decoration:none; margin-left:15px;
+              box-shadow:0 0 12px rgba(255,255,255,0.2);
+              transition:transform 0.3s ease, box-shadow 0.3s ease;">
+       🏠 Back to Home
+    </a>
+  </div>
+</div>
+
+<!-- 🔥 Live Status Script -->
+<script>
+const steps = ["pending","placed","preparing","on_the_way","delivered","cancelled"];
+
+function fetchOrderStatus() {
+  fetch("{% url 'orders:track_status_api' order.id %}")
+    .then(response => response.json())
+    .then(data => {
+      let activeIndex = steps.indexOf(data.status);
+
+      // Build timeline
+      let timelineHtml = `
+        <h4 style="color:#ffcc00; margin-bottom:25px; font-size:20px; text-shadow:0 0 8px #ff6600;">
+          📌 Current Status: <span style="color:#ff6600;">${data.status_display}</span>
+        </h4>
+        <div style="display:flex; justify-content:space-between; align-items:center; position:relative; padding:0 15px;">
+          <div style="position:absolute; top:50%; left:0; height:8px; width:100%;
+                      background:#333; border-radius:6px; transform:translateY(-50%);"></div>
+          <div style="position:absolute; top:50%; left:0; height:8px; width:${(activeIndex/(steps.length-1))*100}%;
+                      background:linear-gradient(90deg, #ff6600, #ffcc00); border-radius:6px;
+                      transform:translateY(-50%); transition:width 0.8s ease;"></div>
+      `;
+
+      steps.forEach((step, idx) => {
+        let active = idx <= activeIndex;
+        timelineHtml += `
+          <div style="text-align:center; flex:1; z-index:2; position:relative;">
+            <div style="
+              width:34px; height:34px; margin:0 auto 10px auto; border-radius:50%;
+              background:${active ? 'linear-gradient(135deg, #ff6600, #ffcc00)' : '#444'};
+              box-shadow:${active ? '0 0 15px rgba(255,102,0,0.9)' : 'inset 0 0 8px #222'};
+              display:flex; align-items:center; justify-content:center;
+              color:white; font-size:14px; font-weight:bold; transition:all 0.6s ease;
+              transform:${active ? 'scale(1.15)' : 'scale(1)'};">
+              ${idx+1}
+            </div>
+            <span style="font-size:13px; color:${active ? '#ffcc00' : '#888'}; font-weight:${active ? 'bold' : 'normal'};
+                         text-transform:capitalize; transition:color 0.4s ease;">
+              ${step.replace("_"," ")}
+            </span>
+          </div>
+        `;
+      });
+
+      timelineHtml += `</div>`;
+      document.getElementById("status-container").innerHTML = timelineHtml;
+    });
+}
+
+// Auto refresh
+setInterval(fetchOrderStatus, 5000);
+fetchOrderStatus();
+</script>
+
+<!-- Extra Glow Animations -->
+<style>
+@keyframes glow {
+  from { text-shadow:0 0 10px rgba(255,102,0,0.6); }
+  to { text-shadow:0 0 20px rgba(255,102,0,1), 0 0 30px rgba(255,204,0,0.8); }
+}
+a:hover {
+  transform:scale(1.05);
+  box-shadow:0 0 20px rgba(255,102,0,0.9) !important;
+}
+</style>
+{% endblock %}

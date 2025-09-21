@@ -1,0 +1,39 @@
+{% for vendor in vendors %}
+  <div class="vendor-card">
+    {% if vendor.image %}
+      <img src="{{ vendor.image.url }}" alt="{{ vendor.name }}">
+    {% else %}
+      <img src="{% static 'images/default_vendor.jpg' %}" alt="Vendor">
+    {% endif %}
+
+    <span class="status {% if vendor.available %}available{% else %}unavailable{% endif %}">
+      {% if vendor.available %}✔ Available{% else %}❌ Unavailable{% endif %}
+    </span>
+
+    <h3>{{ vendor.name }}</h3>
+
+    <div class="vendor-info">
+      <p><i class="fas fa-code"></i> <b style="color:darkorange;">SOT:</b> {{ vendor.code }}</p>
+      <p><i class="fas fa-user"></i> Owner: {{ vendor.owner_name }}</p>
+      <p><i class="fas fa-map-marker-alt"></i> {{ vendor.city }} {% if vendor.pincode %} ({{ vendor.pincode }}){% endif %}</p>
+      <p><i class="fas fa-star"></i> Exp: {{ vendor.experience }} Yrs</p>
+      <p><i class="fas fa-utensils"></i> Signature: {{ vendor.signature_dish }}</p>
+      <p><i class="fas fa-box"></i> Items: {{ vendor.items_count }}</p>
+    </div>
+
+    <div class="rating">
+      ⭐⭐⭐⭐☆ <span>( {{ vendor.reviews_count|default:0 }} reviews )</span>
+    </div>
+
+    <div class="actions">
+      {% if vendor.menu_card %}
+        <a href="{{ vendor.menu_card.url }}" class="btn" target="_blank">📖 Menu</a>
+      {% endif %}
+      <a href="{% url 'vendors:combo_builder' vendor.id %}" class="btn">🍱 Order Combo</a>
+      <a href="{% url 'vendors:vendor_detail' vendor.code %}" class="btn">ℹ️ Details</a>
+      <a href="https://wa.me/{{ vendor.whatsapp_number|default:'919999999999' }}?text=Hi%20{{ vendor.name }}%2C%20I%20want%20to%20order%20from%20Swad%20of%20Tamil!" target="_blank" class="btn btn-whatsapp">💬 WhatsApp</a>
+    </div>
+  </div>
+{% empty %}
+  <p style="text-align:center; color:#aaa;">No vendors found. Try different search.</p>
+{% endfor %}

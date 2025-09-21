@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Our Brand Story | Swad of Tamil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary-bg: #0e0e0e;
+      --secondary-bg: #171717;
+      --accent-orange: #fd8802;
+      --accent-gold: #ffd166;
+      --text-white: #fff;
+      --text-gray: #ccc;
+      --card-radius: 16px;
+      --section-padding: 64px 24px 32px 24px;
+      --max-width: 1080px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--primary-bg);
+      color: var(--text-white);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      letter-spacing: 0.03em;
+      line-height: 1.7;
+    }
+    .navbar {
+      background: #000;
+      padding: 13px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(32,28,23,0.07);
+    }
+    .logo {
+      color: var(--accent-orange);
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-left: 30px;
+      text-shadow: 2px 2px 2px #211;
+      transition: color 0.2s;
+    }
+    .logo:hover { color: var(--accent-gold); }
+    .nav-links {
+      margin-right: 30px;
+    }
+    .nav-btn {
+      background: var(--secondary-bg);
+      border: none;
+      outline: none;
+      color: var(--text-white);
+      padding: 10px 22px;
+      border-radius: 22px;
+      font-weight: 500;
+      font-size: 16px;
+      margin-left: 15px;
+      transition: background 0.25s, color 0.25s;
+      cursor: pointer;
+      border: 2px solid var(--accent-orange);
+    }
+    .nav-btn:hover {
+      background: var(--accent-orange);
+      color: var(--primary-bg);
+    }
+    header {
+      text-align: center;
+      padding: var(--section-padding);
+      background: linear-gradient(90deg,#111,#19130e 80%);
+    }
+    header h1 {
+      color: var(--accent-gold);
+      font-size: 60px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 18px;
+      text-shadow: 3px 3px 8px #211;
+    }
+    header p {
+      color: var(--text-gray);
+      font-size: 23px;
+      padding: 0 20px;
+      max-width: 920px;
+      margin: 0 auto;
+      margin-bottom: 12px;
+    }
+    .mission-section, .chef-section, .signature-section, .vendor-section, .cta-section {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--section-padding);
+    }
+    .section-title {
+      font-size: 38px;
+      color: var(--accent-orange);
+      font-weight: 700;
+      margin-bottom: 24px;
+      letter-spacing: 0.03em;
+    }
+    .card-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      justify-content: center;
+      margin-bottom: 44px;
+    }
+    .card {
+      background: var(--secondary-bg);
+      border-radius: var(--card-radius);
+      flex: 1 1 260px;
+      max-width: 320px;
+      padding: 32px 26px;
+      box-shadow: 0 8px 40px rgba(255,136,2,0.08);
+      margin-bottom: 16px;
+      transition: transform 0.2s;
+      border: 2px solid #222;
+      position: relative;
+    }
+    .card:hover {
+      transform: scale(1.04) translateY(-6px);
+      border: 2px solid var(--accent-gold);
+    }
+    .card-title {
+      color: var(--accent-gold);
+      font-size: 25px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .card-content {
+      color: var(--text-gray);
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeIn 1.2s forwards;
+      animation-delay: 0.2s;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: none;}
+    }
+    /* Highlight */
+    .highlight {
+      color: var(--accent-orange);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .cta-section {
+      background: linear-gradient(90deg,#0e0e0e 60%,#1c120c 100%);
+      border-radius: 30px;
+      box-shadow: 0 6px 24px rgba(255,136,2,0.06);
+      margin-bottom: 30px;
+      text-align: center;
+      padding: 64px 24px;
+    }
+    .cta-section h2 {
+      font-size: 46px;
+      color: var(--accent-gold);
+      margin-bottom: 18px;
+    }
+    .cta-section p {
+      color: var(--text-gray);
+      font-size: 22px;
+      margin-bottom: 26px;
+    }
+    .cta-btn {
+      background: var(--accent-orange);
+      color: var(--primary-bg);
+      border: none;
+      padding: 16px 38px;
+      border-radius: 32px;
+      font-size: 19px;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      box-shadow: 0 2px 16px rgba(255,136,2,0.13);
+      transition: background 0.15s, color 0.18s;
+    }
+    .cta-btn:hover {
+      background: var(--accent-gold);
+      color: var(--secondary-bg);
+    }
+    /* Responsive */
+    @media (max-width:1020px) { .card-row { flex-direction:column; align-items:center;} }
+    @media (max-width:600px) {
+      header h1 { font-size: 34px;}
+      .section-title { font-size: 27px;}
+      .navbar { flex-direction: column; gap: 8px;}
+      .cta-section h2 { font-size: 30px;}
+      .card { padding: 22px 10px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">Swad of Tamil</div>
+  <div class="nav-links">
+    <a href="/"><button class="nav-btn">Home</button></a>
+    <a href="/vendors/"><button class="nav-btn">Vendors</button></a>
+    <a href="/about/"><button class="nav-btn">About</button></a>
+    <a href="/menu/"><button class="nav-btn">Menu</button></a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <h1 class="fade-in">🌿 Our Brand Story</h1>
+  <p class="fade-in">
+    The journey began in Chandigarh, led by a food-obsessed Tamilian, longing for the flavors of home: idlis, chutneys, and sambar. Swad of Tamil is where real chefs — housewives, small vendors, skilled but jobless — craft magic with authenticity in every plate.<br>
+    Our mission: quality, honesty, heritage, and health, for every single bite.
+  </p>
+</header>
+
+<!-- BRAND MISSION SECTION -->
+<section class="mission-section">
+  <div class="section-title fade-in">Our Mission & Vision</div>
+  <div class="card-row">
+    <div class="card fade-in">
+      <div class="card-title">Empowering Authentic Chefs</div>
+      <div class="card-content">
+        We believe true mastery is born at home. We uplift real chefs — housewife superstars, small food vendors, and those striving to build their culinary empire.
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">Connecting Communities</div>
+      <div class="card-content">
+        North meets South on every plate. Our mission bridges tradition and locality, bringing South Indian soul to every doorstep — delicious, affordable, and honest.
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">Nurturing Heritage</div>
+      <div class="card-content">
+        We honor timeless recipes, sustainable techniques, and the vibrant diversity of Tamil food culture. Each meal revitalizes a legacy worth sharing.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHEFS / VENDORS SECTION -->
+<section class="chef-section">
+  <div class="section-title fade-in">Meet Our Chefs & Vendors</div>
+  <div class="card-row">
+    <div class="card fade-in">
+      <div class="card-title">Homegrown Talents</div>
+      <div class="card-content">
+        Our kitchen is powered by brilliant housewives, out-of-work cooks, and hyperlocal vendors. We champion their stories and dreams through food.
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">A Platform for Growth</div>
+      <div class="card-content">
+        Swad of Tamil isn't just a food brand. It's the beginning of a journey for everyone who loves cooking and seeks opportunity, dignity, and fair income.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE DISHES SECTION -->
+<section class="signature-section">
+  <div class="section-title fade-in">Signature South Indian Breakfast</div>
+  <div class="card-row">
+    <div class="card fade-in">
+      <div class="card-title highlight">Idli</div>
+      <div class="card-content">Feather-soft, steamed to perfection, served with love and legacy.</div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title highlight">Vada</div>
+      <div class="card-content">Golden crisp, airy, robustly savory. A classic fritter, time-honored.</div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title highlight">Paniyaram</div>
+      <div class="card-content">Little dumplings — crispy outside, meltingly soft inside. Street favorite.</div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title highlight">Fresh Coconut Chutney</div>
+      <div class="card-content">Creamy, earthy, bursting with freshness and the gentle touch of coconut.</div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title highlight">Peanut Chutney</div>
+      <div class="card-content">Nutty, smooth, with a spark of roasted flavor. Perfect with every bite.</div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title highlight">Onion Tomato Chutney</div>
+      <div class="card-content">Zesty, spicy, sweet, and tangy — a North meets South favorite.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VENDOR INVITATION / EMPOWERMENT -->
+<section class="vendor-section fade-in">
+  <div class="section-title">Grow With Swad</div>
+  <div class="card-row">
+    <div class="card">
+      <div class="card-title">Vendor Partnership</div>
+      <div class="card-content">
+        Are you a small vendor, Housewife Chef, or Foodpreneur? Join Swad of Tamil, turn your recipes into rewarding business and reach hundreds of families with your magic.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Unemployed? Start Your Empire</div>
+      <div class="card-content">
+        We welcome passionate individuals. No experience needed, only love for food. Swad of Tamil will help you step into entrepreneurship, guiding you at every stage.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALL TO ACTION SECTION -->
+<section class="cta-section fade-in">
+  <h2>Be Part of The Taste Revolution</h2>
+  <p>
+    Whether you're a foodie, a culinary artist, or a family looking for authentic South Indian breakfast, Swad of Tamil is the home for your cravings and ambitions. Taste tradition, empower community.
+  </p>
+  <a href="/join/"><button class="cta-btn">Join Us Now</button></a>
+</section>
+
+<!-- FOOTER -->
+<footer style="text-align:center;padding:24px 8px;color:#bbb;font-size:15px;background:#19130e;">
+  &copy; 2025 Swad of Tamil | Authentic South Indian Culinary Story | Made in Chandigarh, with a Tamil Heart
+</footer>
+
+</body>
+</html>

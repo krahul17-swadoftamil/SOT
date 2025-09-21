@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Menu — Swad of Tamil</title>
+
+  <style>
+    :root{
+      --bg-1:#070707; --bg-2:#111; --panel:#121212;
+      --muted:#aab0b8; --accent:#ff9500; --accent-2:#ffd274;
+      --radius:14px; --shadow:0 12px 30px rgba(0,0,0,0.6);
+    }
+    html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(800px 200px at 10% 5%, rgba(255,149,0,0.03), transparent),
+                  linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#fff; -webkit-font-smoothing:antialiased;}
+    .wrap{max-width:1200px;margin:28px auto;padding:18px;}
+
+    header {display:flex;align-items:center;gap:16px;margin-bottom:22px}
+    .logo {background:linear-gradient(90deg,var(--accent),var(--accent-2)); padding:10px 14px;border-radius:12px; color:#111; font-weight:800}
+    .title {font-size:1.4rem;color:var(--accent-2); font-weight:700}
+    .subtitle {color:var(--muted); font-size:0.95rem}
+
+    /* grid */
+    .grid {display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    @media(max-width:1000px){ .grid { grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:640px){ .grid { grid-template-columns:1fr; } }
+
+    /* item card */
+    .menu-item {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height:180px;
+      transition: transform .18s ease, box-shadow .18s ease;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .menu-item:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+
+    .thumb {
+      height:140px;
+      background-size:cover;
+      background-position:center;
+      display:block;
+      position:relative;
+    }
+    .meta {
+      padding:12px 14px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      flex-direction:column;
+      flex:1;
+    }
+    .name {font-weight:800; color:#fff}
+    .desc {color:var(--muted); font-size:0.9rem; margin-top:6px}
+    .bottom {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:auto;
+    }
+
+    .price { font-weight:900; color:var(--accent); font-size:1.05rem; }
+    .actions { display:flex; gap:8px; align-items:center; }
+    .btn {
+      padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:700;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#111;
+      transition: transform .12s ease;
+    }
+    .btn:active{ transform: scale(.98) }
+    .small-btn {
+      background: rgba(255,255,255,0.03);
+      color:var(--accent-2);
+      padding:8px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+
+    /* option chips */
+    .options { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px }
+    .chip { background:#0f0f0f; padding:6px 8px; border-radius:999px; color:var(--muted); font-size:0.85rem; border:1px solid rgba(255,255,255,0.02) }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">🧾 LTS</div>
+      <div>
+        <div class="title">Swad of Tamil — Menu</div>
+        <div class="subtitle">All items are managed from the admin. Tap an item to add to cart.</div>
+      </div>
+      <div style="margin-left:auto">
+        <a class="btn small-btn" href="{% url 'orders:view_cart' %}">View Cart →</a>
+      </div>
+    </header>
+
+    {% comment %}
+      Expected context: menu_items: queryset/list of items with fields:
+        id, name, description, price, image_url (nullable string), options (iterable)
+    {% endcomment %}
+
+    {% if menu_items %}
+      <section class="grid" aria-live="polite">
+        {% for item in menu_items %}
+          <article class="menu-item" data-id="{{ item.id }}" data-price="{{ item.price }}">
+            {# Use conditional: don't call static() inside filter #}
+            <div class="thumb"
+                 style="background-image:url('{% if item.image_url %}{{ item.image_url }}{% else %}{% static 'orders/img/placeholder.png' %}{% endif %}')"
+                 role="img" aria-label="{{ item.name }}">
+            </div>
+
+            <div class="meta">
+              <div class="name">{{ item.name }}</div>
+              <div class="desc">{{ item.description|default:"Made fresh daily. Choose options and add to cart." }}</div>
+
+              {% if item.options %}
+                <div class="options" aria-hidden="false">
+                  {% for opt in item.options %}
+                    <span class="chip">{{ opt.label }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              <div class="bottom" style="margin-top:8px">
+                <div class="price">₹ {{ item.price|floatformat:2 }}</div>
+
+                <div class="actions">
+                  <form method="post" action="{% url 'orders:add_to_cart' item.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button class="btn" type="submit" aria-label="Add {{ item.name }} to cart">Add</button>
+                  </form>
+
+                  <a class="small-btn" href="{% url 'core:item_detail' item.id %}">Details</a>
+                </div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </section>
+    {% else %}
+      <div class="card" style="padding:28px;text-align:center">
+        <h3 style="margin:0 0 8px 0">No items available</h3>
+        <p class="desc muted">The menu is empty or items are not published. Check admin inventory.</p>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

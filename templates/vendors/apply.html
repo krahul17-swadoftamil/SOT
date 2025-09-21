@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join as Vendor - Swad of Tamil</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <!-- Lottie Animations -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --accent: #ff6a00;
+      --text: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    .apply-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(255, 106, 0, 0.3);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .apply-card::before {
+      content: "✨";
+      font-size: 80px;
+      position: absolute;
+      top: -20px;
+      right: 20px;
+      animation: float 5s infinite ease-in-out;
+      opacity: 0.2;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(20deg); }
+    }
+
+    form label {
+      display: block;
+      font-weight: 700;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: var(--accent);
+    }
+
+    form input, form textarea, form select {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    form input:focus, form textarea:focus {
+      border: 1px solid var(--accent);
+    }
+
+    .btn-submit {
+      margin-top: 25px;
+      padding: 12px 20px;
+      background: var(--accent);
+      border: none;
+      border-radius: 14px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      color: var(--bg);
+    }
+
+    .btn-submit:hover {
+      background: #ff8533;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255, 106, 0, 0.6);
+    }
+
+    .lottie-decor {
+      position: absolute;
+      bottom: -30px;
+      right: -20px;
+      width: 150px;
+      height: 150px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🍽️ Join Swad of Tamil</h1>
+    <p>Become part of our premium vendor family. Get discovered, earn trust, and grow your brand 🚀</p>
+  </header>
+
+  <div class="apply-card">
+    <form method="post">
+      {% csrf_token %}
+      <label for="name">👨‍🍳 Your Name</label>
+      <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+      <label for="contact">📱 Contact Number</label>
+      <input type="text" id="contact" name="contact" placeholder="Mobile / WhatsApp" required>
+
+      <label for="city">🏙️ City</label>
+      <input type="text" id="city" name="city" placeholder="Where do you operate?" required>
+
+      <label for="speciality">🍛 Your Speciality</label>
+      <input type="text" id="speciality" name="speciality" placeholder="Eg: Idli, Dosa, Parotta, etc." required>
+
+      <label for="reason">💡 Why join Swad of Tamil?</label>
+      <textarea id="reason" name="reason" rows="3" placeholder="Tell us your story..." required></textarea>
+
+      <button type="submit" class="btn-submit">✨ Apply Now</button>
+    </form>
+
+    <!-- Decorative animation -->
+    <lottie-player 
+      src="https://assets1.lottiefiles.com/packages/lf20_qp1q7mct.json" 
+      background="transparent" 
+      speed="1" 
+      loop 
+      autoplay 
+      class="lottie-decor">
+    </lottie-player>
+  </div>
+
+</body>
+</html>
