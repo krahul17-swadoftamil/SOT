@@ -1,126 +1,239 @@
-{% extends "base.html" %}
-{% load static %}
+={% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Swad of Tamil — Build Your Combo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --accent: #ff7f27; --accent-2: #ffb347; }
+    body { font-family: Roboto, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .qty-btn { min-width: 40px; }
+    .dragging { opacity: 0.5; transform: scale(0.98); transition: all .12s ease; }
+    .drop-over { box-shadow: 0 10px 30px rgba(255,127,39,0.08); border-color: rgba(255,127,39,0.15); }
+    .modal-backdrop { background: rgba(0,0,0,0.6); }
+  </style>
+</head>
+<body class="bg-black text-white">
 
-{% block title %}Build Your Combo - {{ vendor.name }}{% endblock %}
+  <!-- Header -->
+  <header class="border-b border-gray-800 py-6">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <h1 class="text-2xl font-bold text-[var(--accent)]">🍲 Swad of Tamil</h1>
+      <p class="text-sm text-gray-400">Premium Tamil Combo Builder</p>
+    </div>
+  </header>
 
-{% block content %}
-<div class="builder-dashboard container-fluid py-5" style="max-width:1400px;">
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Items -->
+    <section class="lg:col-span-2">
+      <div id="items-loading" class="text-center py-10">
+        <div class="animate-spin border-4 border-[var(--accent)] border-t-transparent rounded-full w-12 h-12 mx-auto mb-4"></div>
+        <p id="items-loading-text" class="text-gray-400">Loading menu items...</p>
+      </div>
+      <div id="menu-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </section>
 
-  <!-- Vendor Header -->
-  <div class="text-center mb-5">
-    <h1 class="fw-bold" style="color:#ff7f27; font-size:2.5rem; animation: fadeIn 1s;">
-      🍽️ Build Your Combo with <span style="color:#fff;">{{ vendor.name }}</span>
-    </h1>
-    <p class="text-muted">Customize your meal with authentic Tamil flavors. ✨</p>
-  </div>
+    <!-- Sidebar -->
+    <aside>
+      <div id="dropzone" class="bg-[#111] p-6 rounded-2xl shadow-lg min-h-[220px] flex flex-col justify-between">
+        <div>
+          <h2 class="text-[var(--accent)] font-semibold text-lg mb-1">🧾 Your Combo</h2>
+          <p id="drop-hint" class="text-sm text-gray-400">Drag items here or use + / − to add.</p>
+          <div id="summary-lines" class="mt-4 space-y-2 text-sm text-gray-200 min-h-[100px]"></div>
+        </div>
 
-  <!-- Preset Combo Carousel -->
-  {% if combos %}
-  <div id="comboCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
-    <div class="carousel-inner rounded-3 shadow-lg">
-      {% for combo in combos %}
-      <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        <img src="{{ combo.image.url }}" class="d-block w-100 rounded-3" alt="{{ combo.name }}" style="max-height:400px; object-fit:cover;">
-        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
-          <h5 class="text-warning">{{ combo.name }}</h5>
-          <p class="text-light small">{{ combo.description|default:"A delightful Tamil combo" }}</p>
+        <div class="mt-4">
+          <div class="flex justify-between text-gray-400">
+            <span>Subtotal</span><span id="subtotal-price">₹0.00</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>GST (5%)</span><span id="gst-price">₹0.00</span>
+          </div>
+          <div class="flex justify-between font-bold text-lg mt-2">
+            <span>Total</span><span id="total-price">₹0.00</span>
+          </div>
+
+          <button id="place-order" class="mt-4 w-full bg-[var(--accent)] hover:bg-[var(--accent-2)] text-black font-bold py-3 rounded-lg">
+            ✅ Place Order
+          </button>
         </div>
       </div>
-      {% endfor %}
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#comboCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#comboCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </button>
-  </div>
-  {% endif %}
+    </aside>
+  </main>
 
-  <!-- Builder + Summary Grid -->
-  <div class="row g-4">
-    <!-- Menu Items -->
-    <div class="col-lg-8">
-      <div id="menu-container" 
-           data-vendor-code="{{ vendor.code }}" 
-           data-create-url="{% url 'orders:create_custom_order' vendor.code %}">
-        {% for item in items %}
-        <div class="menu-row card bg-dark border-0 shadow-sm mb-4 p-3" 
-             data-item-id="{{ item.id }}" 
-             data-price="{{ item.price }}" 
-             data-name="{{ item.name }}">
-          <div class="d-flex gap-3 align-items-center">
-            <!-- Item Image -->
-            <div style="min-width:120px;">
-              <img src="{{ item.image.url }}" alt="{{ item.name }}" 
-                   class="rounded-3" 
-                   style="width:120px; height:120px; object-fit:cover;">
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-backdrop absolute inset-0"></div>
+    <div class="bg-[#111] border border-gray-800 rounded-xl p-6 z-10 w-[90%] max-w-md shadow-xl">
+      <h3 class="text-lg font-semibold text-[var(--accent)] mb-2">Confirm order</h3>
+      <p class="text-gray-300 mb-4">Do you want to proceed to checkout with the selected items?</p>
+      <div class="flex justify-end space-x-3">
+        <button id="modal-cancel" class="px-4 py-2 rounded text-gray-200 border border-gray-700">Cancel</button>
+        <button id="modal-ok" class="px-4 py-2 rounded bg-[var(--accent)] text-black font-bold">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkout-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative w-full max-w-md p-6 bg-[#111] rounded-lg border border-gray-800">
+      <h3 class="text-orange-400 font-semibold mb-2">Enter delivery details</h3>
+      <form id="checkout-form" class="space-y-3">
+        <div>
+          <label class="block text-sm text-gray-300">Name *</label>
+          <input name="customer_name" required class="w-full mt-1 p-2 rounded bg-black border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300">Phone *</label>
+          <input name="customer_phone" required class="w-full mt-1 p-2 rounded bg-black border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300">Email</label>
+          <input name="customer_email" class="w-full mt-1 p-2 rounded bg-black border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300">Address</label>
+          <textarea name="delivery_address" class="w-full mt-1 p-2 rounded bg-black border border-gray-700"></textarea>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button type="button" id="checkout-cancel" class="px-4 py-2 border rounded">Cancel</button>
+          <button type="submit" id="checkout-submit" class="px-4 py-2 bg-orange-400 text-black rounded">Place Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script>const PLACEHOLDER_IMG = "{% static 'img/placeholder.png' %}";</script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuContainer = document.getElementById('menu-container');
+    const apiUrl = "{% url 'vendors:vendor_items_api' vendor.vendor_code %}";
+    const createUrl = "{% url 'vendors:create_custom_order' vendor.vendor_code %}";
+    const loader = document.getElementById('items-loading');
+    const loaderText = document.getElementById('items-loading-text');
+    const dropzone = document.getElementById('dropzone');
+    const summaryLines = document.getElementById('summary-lines');
+    const subtotalEl = document.getElementById('subtotal-price');
+    const gstEl = document.getElementById('gst-price');
+    const totalEl = document.getElementById('total-price');
+    const placeBtn = document.getElementById('place-order');
+    const modal = document.getElementById('confirm-modal');
+    const modalOk = document.getElementById('modal-ok');
+    const modalCancel = document.getElementById('modal-cancel');
+    const checkoutModal = document.getElementById('checkout-modal');
+    const checkoutForm = document.getElementById('checkout-form');
+    const checkoutCancel = document.getElementById('checkout-cancel');
+
+    let items = {}, cart = {};
+    const GST = 5.0;
+
+    function formatINR(v){ return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(v); }
+    function getCsrf(){ const c = document.cookie.split(';').map(x=>x.trim()).find(x=>x.startsWith('csrftoken=')); return c?c.split('=')[1]:''; }
+    function showError(msg){ loaderText.innerText = msg; loaderText.classList.add('text-red-500'); }
+
+    async function fetchItems(){
+      try {
+        const res = await fetch(apiUrl,{credentials:'same-origin'});
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error||'Failed to load');
+        renderItems(data.items||[]);
+        loader.classList.add('hidden');
+        menuContainer.classList.remove('hidden');
+      } catch(err){ console.error(err); showError('❌ Failed to load menu items.'); }
+    }
+
+    function renderItems(list){
+      menuContainer.innerHTML=''; items={}; cart={};
+      if(!list.length){ menuContainer.innerHTML='<p class="col-span-2 text-gray-400">No items available.</p>'; return; }
+      list.forEach(it=>{
+        const id=Number(it.id); items[id]=it; cart[id]=0;
+        const card=document.createElement('div');
+        card.className='bg-[#111] p-4 rounded-lg shadow cursor-move flex flex-col'; card.draggable=true; card.dataset.itemId=id;
+        const imgUrl=it.image||PLACEHOLDER_IMG;
+        card.innerHTML=`
+          <img src="${imgUrl}" alt="${escapeHtml(it.name)}" class="w-full h-36 object-cover rounded mb-3"/>
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1">
+              <h4 class="text-orange-400 font-semibold">${escapeHtml(it.name)}</h4>
+              <p class="text-xs text-gray-400 mt-1">${escapeHtml(it.description||'')}</p>
             </div>
-            <!-- Item Details -->
-            <div class="flex-grow-1">
-              <h4 class="mb-1 text-warning">{{ item.name }} 🍛</h4>
-              <p class="text-muted small mb-1">{{ item.description|default:"Delicious & fresh Tamil delicacy" }}</p>
-              <p class="fw-bold text-light">₹{{ item.price }}</p>
-            </div>
-            <!-- Controls -->
-            <div class="text-end">
-              <div class="qty-controls d-flex align-items-center justify-content-end gap-2">
-                <button class="qty-btn" data-action="minus">➖</button>
-                <span id="qty-{{ item.id }}" class="item-qty fw-bold text-white">0</span>
-                <button class="qty-btn" data-action="plus">➕</button>
+            <div class="text-right">
+              <div class="font-bold">${formatINR(it.price)}</div>
+              <div class="flex items-center mt-2">
+                <button class="qty-btn minus px-3 py-1 rounded bg-gray-700 text-white" data-id="${id}">−</button>
+                <div id="qty-${id}" class="px-3 text-center">0</div>
+                <button class="qty-btn plus px-3 py-1 rounded bg-[var(--accent)] text-black" data-id="${id}">+</button>
               </div>
-              <p class="mt-2 small text-light">Line: 
-                <span id="line-{{ item.id }}" class="fw-bold text-warning">₹0.00</span>
-              </p>
             </div>
           </div>
-        </div>
-        {% empty %}
-        <p class="text-center text-muted">⚠️ No items found for this vendor.</p>
-        {% endfor %}
-      </div>
-    </div>
+          <div class="text-right text-xs text-gray-300 mt-2"><span id="line-${id}">₹0.00</span></div>
+        `;
+        menuContainer.appendChild(card);
+        card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(id));card.classList.add('dragging');});
+        card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+        card.querySelector('.plus').addEventListener('click',()=>changeQty(id,1));
+        card.querySelector('.minus').addEventListener('click',()=>changeQty(id,-1));
+      });
+    }
 
-    <!-- Order Summary -->
-    <div class="col-lg-4">
-      <div class="card bg-dark border-0 shadow-lg p-4 sticky-top" style="top:80px;">
-        <h4 class="text-white mb-3">🧾 Order Summary</h4>
-        <ul id="order-items" class="list-unstyled text-light small mb-4"></ul>
-        <hr class="border-secondary">
-        <h3 class="text-white">Total: 
-          <span id="total-price" class="text-warning">₹0.00</span>
-        </h3>
-        <button id="place-order" 
-                class="btn w-100 mt-4 fw-bold" 
-                style="background:linear-gradient(45deg,#ff7f27,#ffb347); border:none; border-radius:12px; font-size:1.1rem;">
-          🚀 Place Order
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+    function escapeHtml(text){return !text?'':text.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+    dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('drop-over');});
+    dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drop-over'));
+    dropzone.addEventListener('drop',e=>{e.preventDefault();dropzone.classList.remove('drop-over');const id=Number(e.dataTransfer.getData('text/plain'));if(!isNaN(id))changeQty(id,1);});
 
-<!-- Animations + Styles -->
-<style>
-@keyframes fadeIn {
-  from {opacity:0; transform: translateY(-20px);}
-  to {opacity:1; transform: translateY(0);}
-}
-.qty-btn {
-  background:#ff7f27; 
-  color:#fff; 
-  border:none; 
-  border-radius:8px; 
-  padding:6px 12px; 
-  cursor:pointer; 
-  font-weight:bold; 
-  transition: all 0.2s ease;
-}
-.qty-btn:hover { background:#ffb347; }
-.menu-row { animation: fadeIn 0.5s; }
-</style>
-{% endblock %}
+    function changeQty(id,delta){
+      const it=items[id]; if(!it) return;
+      const price = parseFloat(it.price);
+      cart[id]=Math.max(0,(cart[id]||0)+delta);
+      document.getElementById(`qty-${id}`).innerText=cart[id];
+      document.getElementById(`line-${id}`).innerText=formatINR((cart[id]||0)*price);
+      updateSummary();
+    }
 
-{% block extra_scripts %}
-<script src="{% static 'js/combo_builder.js' %}"></script>
-{% endblock %}
+    function updateSummary(){
+      summaryLines.innerHTML='';let subtotal=0;
+      Object.keys(cart).forEach(k=>{
+        const id=+k,q=cart[id]; if(!q)return;
+        const it=items[id], price=parseFloat(it.price), line=q*price;
+        subtotal+=line;
+        const row=document.createElement('div');
+        row.className='flex justify-between text-sm';
+        row.innerHTML=`<div>${escapeHtml(it.name)} × ${q}</div><div>${formatINR(line)}</div>`;
+        summaryLines.appendChild(row);
+      });
+      subtotalEl.innerText=formatINR(subtotal);
+      const gst=+(subtotal*(GST/100));
+      gstEl.innerText=formatINR(gst);
+      totalEl.innerText=formatINR(subtotal+gst);
+    }
+
+    function show(el){el.classList.remove('hidden');el.style.display='flex';}
+    function hide(el){el.classList.add('hidden');el.style.display='none';}
+
+    placeBtn.addEventListener('click',()=>{if(!Object.keys(cart).some(k=>cart[k]>0)){alert('Select items first');return;}show(modal);});
+    modalCancel.addEventListener('click',()=>hide(modal));
+    modalOk.addEventListener('click',()=>{hide(modal);show(checkoutModal);});
+
+    checkoutCancel.addEventListener('click',()=>hide(checkoutModal));
+    checkoutForm.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const payload={items:Object.keys(cart).filter(k=>cart[k]>0).map(k=>({id:+k,quantity:cart[k]})),...Object.fromEntries(new FormData(checkoutForm).entries())};
+      try{
+        const res=await fetch(createUrl,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRFToken':getCsrf()},body:JSON.stringify(payload)});
+        const data=await res.json();
+        if(!res.ok||!data.success)throw new Error(data.error||`Order failed (${res.status})`);
+        window.location.href=data.redirect_url||`/orders/detail/${data.order_id}/`;
+      }catch(err){console.error(err);alert('❌ Order failed: '+(err.message||'Network error'));}
+    });
+
+    fetchItems();
+  });
+  </script>
+</body>
+</html>
