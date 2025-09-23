@@ -1,0 +1,26 @@
+[
+  {
+    "model": "menuitem.comborule",
+    "pk": 1,
+    "fields": {
+      "vendor": 1,
+      "name": "Classic Idli Combo",
+      "required_idli": 4,
+      "required_chutney": 2,
+      "required_sambar": 1,
+      "combo_price": "80.00"
+    }
+  },
+  {
+    "model": "menuitem.comborule",
+    "pk": 2,
+    "fields": {
+      "vendor": 1,
+      "name": "Family Dinner",
+      "required_idli": 6,
+      "required_chutney": 2,
+      "required_sambar": 2,
+      "combo_price": "120.00"
+    }
+  }
+]

@@ -7,7 +7,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from .forms import ContactForm
-from vendors.models import Vendor, Combo
+from vendors.models import Vendor
+from menuitem.models import Combo
 from menuitem.models import MenuItem
 from orders.models import Order
 from .forms import ContactForm

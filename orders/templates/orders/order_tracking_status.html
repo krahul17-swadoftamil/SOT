@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width:700px; margin:auto; padding:20px; background:#111; color:#fff; border-radius:12px;">
+  <h2 style="color:darkorange;">📜 Tracking History for Order #{{ order.id }}</h2>
+  <p>Status: <b>{{ order.get_status_display }}</b></p>
+  <hr style="border-color:darkorange;">
+  
+  {% if logs %}
+    <ul style="list-style:none; padding-left:0;">
+      {% for log in logs %}
+        <li style="margin-bottom:15px; padding:10px; border-left:4px solid darkorange; background:#222; border-radius:6px;">
+          <b>{{ log.status|title }}</b>
+          <div style="font-size:0.9em; color:#aaa;">{{ log.timestamp }}</div>
+          {% if log.note %}
+            <div style="font-size:0.9em;">📝 {{ log.note }}</div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No tracking logs yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

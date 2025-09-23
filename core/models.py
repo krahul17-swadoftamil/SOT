@@ -1,7 +1,8 @@
 # core/models.py
 from django.db import models
 from django.db.models import F
-from vendors.models import Vendor, Combo
+from vendors.models import Vendor
+from menuitem.models import Combo   # ✅ yaha se import karna hai
 
 
 # ----------------------

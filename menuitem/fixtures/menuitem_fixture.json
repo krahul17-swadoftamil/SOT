@@ -1,0 +1,82 @@
+[
+  {
+    "model": "menuitem.menuitem",
+    "pk": 1,
+    "fields": {
+      "vendor": 1,
+      "name": "Idli",
+      "category": "idli",
+      "price": "18.00",
+      "is_available": true,
+      "calories": "58.00",
+      "protein": "2.00",
+      "carbs": "12.00",
+      "fat": "0.40",
+      "fiber": "0.50"
+    }
+  },
+  {
+    "model": "menuitem.menuitem",
+    "pk": 2,
+    "fields": {
+      "vendor": 1,
+      "name": "Sambar",
+      "category": "sambar",
+      "price": "7.00",
+      "is_available": true,
+      "calories": "100.00",
+      "protein": "5.00",
+      "carbs": "15.00",
+      "fat": "3.00",
+      "fiber": "2.00"
+    }
+  },
+  {
+    "model": "menuitem.menuitem",
+    "pk": 3,
+    "fields": {
+      "vendor": 1,
+      "name": "Coconut Chutney",
+      "category": "chutney",
+      "price": "3.00",
+      "is_available": true,
+      "calories": "45.00",
+      "protein": "1.00",
+      "carbs": "2.00",
+      "fat": "4.00",
+      "fiber": "1.00"
+    }
+  },
+  {
+    "model": "menuitem.menuitem",
+    "pk": 4,
+    "fields": {
+      "vendor": 1,
+      "name": "Peanut Chutney",
+      "category": "chutney",
+      "price": "2.00",
+      "is_available": true,
+      "calories": "60.00",
+      "protein": "3.00",
+      "carbs": "4.00",
+      "fat": "5.00",
+      "fiber": "1.00"
+    }
+  },
+  {
+    "model": "menuitem.menuitem",
+    "pk": 5,
+    "fields": {
+      "vendor": 1,
+      "name": "Onion Tomato Chutney",
+      "category": "chutney",
+      "price": "3.00",
+      "is_available": true,
+      "calories": "30.00",
+      "protein": "1.00",
+      "carbs": "5.00",
+      "fat": "1.00",
+      "fiber": "1.00"
+    }
+  }
+]

@@ -120,7 +120,7 @@
         {% if vendor.menu_card %}
           <a href="{{ vendor.menu_card.url }}" class="btn" target="_blank">📖 Menu</a>
         {% endif %}
-        <a href="{% url 'vendors:combo_builder' vendor.id %}" class="btn">🍱 Order Combo</a>
+        <a href="{% url 'vendors:combo_builder' vendor.vendor_code %}" class="btn">🛒 Order Combo</a>
         <a href="{% url 'vendors:vendor_detail' vendor.code %}" class="btn">ℹ️ Details</a>
         <a href="https://wa.me/{{ vendor.whatsapp_number|default:'919999999999' }}?text=Hi%20{{ vendor.name }}%2C%20I%20want%20to%20order%20from%20Swad%20of%20Tamil!" target="_blank" class="btn btn-whatsapp">💬 WhatsApp</a>
       </div>

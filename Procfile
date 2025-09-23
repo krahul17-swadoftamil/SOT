@@ -1,1 +1,1 @@
-web: gunicorn streetkitchen.wsgi --log-file -
+web: gunicorn streetkitchen.wsgi:application

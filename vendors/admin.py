@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import Vendor, Combo, ComboItem, ComboVendor
-from .models import VendorApplication
-
+from .models import Vendor, ComboItem, ComboVendor, VendorApplication
+from menuitem.models import Combo   # ✅ use the real Combo
 
 # ----------------------
 # Inline: Vendor–Combo relation (through model)
@@ -11,7 +10,6 @@ class ComboVendorInline(admin.TabularInline):
     extra = 1
     autocomplete_fields = ["vendor", "combo"]
 
-
 # ----------------------
 # Inline: ComboItem inside Combo
 # ----------------------
@@ -20,7 +18,6 @@ class ComboItemInline(admin.TabularInline):
     extra = 1
     fields = ("menu_item", "quantity")
     autocomplete_fields = ["menu_item"]
-
 
 # ----------------------
 # Vendor Admin
@@ -38,19 +35,22 @@ class VendorApplicationAdmin(admin.ModelAdmin):
     search_fields = ("name","email","mobile","city")
     list_filter = ("created_at",) 
 
-
 # ----------------------
-# Combo Admin
+# Combo Admin (real model from menuitem)
 # ----------------------
 @admin.register(Combo)
 class ComboAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "is_available", "created_at")
-    list_filter = ("is_available",)
+    list_display = ("name", "price", "get_vendors")   # ✅ show vendors via helper
+    list_filter = ("vendors", "is_available")         # ✅ use vendors (M2M)
     search_fields = ("name", "description")
     ordering = ("name",)
-    list_editable = ("price", "is_available")
+    list_editable = ("price",)
     inlines = [ComboItemInline, ComboVendorInline]
 
+    # custom method to display vendors in list
+    def get_vendors(self, obj):
+        return ", ".join([v.name for v in obj.vendors.all()])
+    get_vendors.short_description = "Vendors"
 
 # ----------------------
 # ComboItem Admin

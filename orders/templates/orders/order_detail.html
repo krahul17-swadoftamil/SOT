@@ -1,0 +1,271 @@
+{# templates/orders/order_summary.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+/* --------------------------
+   🌸 Swad of Tamil Theme
+--------------------------- */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #111;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+.order-container {
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    color: #fff;
+    max-width: 900px;
+    margin: 20px auto;
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(255,140,0,0.4);
+    padding: 20px;
+    animation: fadeInUp 0.8s ease-in-out;
+}
+@keyframes fadeInUp {
+    0% { transform: translateY(50px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+h2 {
+    font-size: 1.8rem;
+    color: #ff8c00;
+    border-bottom: 2px solid rgba(255,140,0,0.4);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.btn {
+    background: #ff8c00;
+    border: none;
+    padding: 12px 18px;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s;
+}
+.btn:hover {
+    background: #ff9f2b;
+    transform: translateY(-2px);
+}
+.btn-outline {
+    background: transparent;
+    border: 2px solid #ff8c00;
+    color: #ff8c00;
+}
+.btn-outline:hover {
+    background: #ff8c00;
+    color: #fff;
+}
+.input-field {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #222;
+    color: #fff;
+    margin-bottom: 12px;
+}
+.input-field:focus {
+    border-color: #ff8c00;
+    outline: none;
+    box-shadow: 0 0 5px rgba(255,140,0,0.6);
+}
+/* --------------------------
+   📦 Order Items Table
+--------------------------- */
+.order-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.order-items th, .order-items td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    text-align: left;
+}
+.order-items th {
+    color: #ff8c00;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.9rem;
+}
+.order-items td {
+    font-size: 0.95rem;
+}
+/* --------------------------
+   💰 Billing Summary
+--------------------------- */
+.bill-summary {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px rgba(255,140,0,0.2);
+}
+.bill-summary h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: #ff8c00;
+}
+.bill-summary .line {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 0.95rem;
+}
+.bill-summary .line.total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-top: 2px solid #444;
+    margin-top: 8px;
+    padding-top: 12px;
+}
+/* --------------------------
+   🚚 Tracking Timeline
+--------------------------- */
+.timeline {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    border-left: 3px solid #ff8c00;
+}
+.timeline li {
+    margin: 20px 0;
+    padding-left: 20px;
+    position: relative;
+}
+.timeline li::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 5px;
+    width: 14px;
+    height: 14px;
+    background: #ff8c00;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255,140,0,0.6);
+}
+.timeline .status {
+    font-weight: bold;
+    color: #fff;
+}
+.timeline .time {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+/* --------------------------
+   📱 Mobile Responsiveness
+--------------------------- */
+@media (max-width: 768px) {
+    .order-container { padding: 15px; }
+    h2 { font-size: 1.4rem; }
+    .order-items th, .order-items td { font-size: 0.85rem; padding: 8px; }
+    .bill-summary { font-size: 0.9rem; }
+}
+</style>
+
+<div class="order-container">
+    <h2>🛒 Order Summary - Swad of Tamil</h2>
+
+    {# ✅ Django messages display #}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {# 📦 Order items table #}
+    <table class="order-items">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price (₹)</th>
+                <th>Total (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.order_items.all %}
+            <tr>
+                <td>{{ item.menu_item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.total_price }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align:center;">No items in this order.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {# 💰 Bill summary #}
+    <div class="bill-summary">
+        <h3>Billing Details</h3>
+        <div class="line"><span>Subtotal</span><span>₹{{ subtotal }}</span></div>
+        <div class="line"><span>Delivery Fee</span><span>₹{{ delivery_fee }}</span></div>
+        <div class="line"><span>Tax</span><span>₹{{ tax_amount }}</span></div>
+        <div class="line total"><span>Grand Total</span><span>₹{{ grand_total }}</span></div>
+    </div>
+
+    {# 🚀 Quick Checkout Form #}
+    <h2>🚀 Quick Checkout</h2>
+    <form id="checkoutForm" method="post" action="{% url 'orders:place_order' order.id %}">
+        {% csrf_token %}
+        <input type="text" name="delivery_name" class="input-field" placeholder="Full Name" required>
+        <input type="tel" name="delivery_phone" class="input-field" placeholder="Mobile Number" required>
+        <textarea name="delivery_address" class="input-field" placeholder="Delivery Address" rows="3" required></textarea>
+        <input type="text" name="pincode" class="input-field" placeholder="Pincode" required>
+
+        <label for="payment_method">Payment Method:</label>
+        <select name="payment_method" id="payment_method" class="input-field" required>
+            <option value="cod">Cash on Delivery</option>
+            <option value="upi">UPI</option>
+            <option value="card">Credit/Debit Card</option>
+        </select>
+
+        <button type="submit" class="btn">✅ Place Order</button>
+    </form>
+
+    {# 🚚 Order Tracking Timeline #}
+    <h2>🚚 Order Tracking</h2>
+    <ul class="timeline" id="trackingTimeline">
+        {% for log in order.tracking_logs.all %}
+        <li>
+            <div class="status">{{ log.status|capfirst }}</div>
+            <div class="time">{{ log.timestamp|date:"M d, Y H:i" }}</div>
+        </li>
+        {% empty %}
+        <li><div class="status">No tracking updates yet.</div></li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+// ----------------------------
+// 📡 Auto-refresh tracking logs
+// ----------------------------
+function refreshTracking() {
+    fetch("{% url 'orders:order_tracking_status' order.id %}")
+        .then(response => response.json())
+        .then(data => {
+            let timeline = document.getElementById("trackingTimeline");
+            timeline.innerHTML = "";
+            data.logs.forEach(log => {
+                let li = document.createElement("li");
+                li.innerHTML = `
+                    <div class="status">${log.status}</div>
+                    <div class="time">${log.timestamp}</div>
+                `;
+                timeline.appendChild(li);
+            });
+        });
+}
+setInterval(refreshTracking, 10000); // every 10 sec
+</script>
+
+{% endblock %}

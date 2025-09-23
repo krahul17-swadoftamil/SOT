@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="order-container">
+    <h2>💳 Payment for Order #{{ order.id }}</h2>
+
+    <p><strong>Vendor:</strong> {{ order.vendor.name }}</p>
+    <p><strong>Total Amount:</strong> ₹{{ order.total_price }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="payment_method">Choose Payment Method:</label>
+        <select name="payment_method" id="payment_method" class="input-field" required>
+            <option value="cod">Cash on Delivery</option>
+            <option value="upi">UPI</option>
+            <option value="card">Credit/Debit Card</option>
+        </select>
+        <button type="submit" class="btn">💰 Pay Now</button>
+    </form>
+
+    <p style="margin-top:15px;">
+        <a href="{% url 'orders:order_summary' order.id %}" class="btn-outline">⬅ Back to Order Summary</a>
+    </p>
+</div>
+{% endblock %}

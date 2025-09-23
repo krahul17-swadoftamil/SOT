@@ -1,239 +1,568 @@
-={% load static %}
-<!doctype html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Swad of Tamil — Build Your Combo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swad of Tamil — Combo Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#f97316',
+            'primary-dark': '#ea580c',
+            'secondary': '#16a34a',
+            'dark': '#0a0a0a',
+            'darker': '#111827',
+            'dark-light': '#1f2937',
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    :root { --accent: #ff7f27; --accent-2: #ffb347; }
-    body { font-family: Roboto, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-    .qty-btn { min-width: 40px; }
-    .dragging { opacity: 0.5; transform: scale(0.98); transition: all .12s ease; }
-    .drop-over { box-shadow: 0 10px 30px rgba(255,127,39,0.08); border-color: rgba(255,127,39,0.15); }
-    .modal-backdrop { background: rgba(0,0,0,0.6); }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #f8f8f8;
+      min-height: 100vh;
+    }
+    .animate-fadeIn { animation: fadeIn 0.6s ease-in-out; }
+    @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+    .glow { text-shadow: 0 0 8px rgba(255,140,0,0.6); }
+    .cart-animate { animation: cartBump 0.4s ease-in-out; }
+    @keyframes cartBump { 0%{transform:scale(1);} 50%{transform:scale(1.1);} 100%{transform:scale(1);} }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(249,115,22,0.4);} 70%{box-shadow:0 0 0 10px rgba(249,115,22,0);} 100%{box-shadow:0 0 0 0 rgba(249,115,22,0);} }
+    .nutrition-bar { height: 6px; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #1f2937; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #6b7280; }
   </style>
 </head>
-<body class="bg-black text-white">
+<body class="min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="border-b border-gray-800 py-6">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h1 class="text-2xl font-bold text-[var(--accent)]">🍲 Swad of Tamil</h1>
-      <p class="text-sm text-gray-400">Premium Tamil Combo Builder</p>
+  <!-- HEADER -->
+  <header class="bg-dark border-b border-primary p-4 flex justify-between items-center sticky top-0 z-50 shadow-lg">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+        <i class="fas fa-utensils text-white"></i>
+      </div>
+      <h1 class="text-2xl font-bold text-primary glow">Swad of Tamil <span class="text-sm font-normal">🍲</span></h1>
+    </div>
+    <nav class="space-x-6 text-white text-sm hidden md:flex">
+      <a href="#" class="hover:text-primary transition-colors duration-300 flex items-center"><i class="fas fa-home mr-1"></i> Home</a>
+      <a href="#" class="hover:text-primary transition-colors duration-300 flex items-center"><i class="fas fa-book-open mr-1"></i> Menu</a>
+      <a href="#" class="hover:text-primary transition-colors duration-300 flex items-center"><i class="fas fa-receipt mr-1"></i> My Orders</a>
+    </nav>
+    <div class="md:hidden">
+      <button id="mobile-menu-btn" class="text-white p-2">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
     </div>
   </header>
 
-  <!-- Main -->
-  <main class="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Items -->
-    <section class="lg:col-span-2">
-      <div id="items-loading" class="text-center py-10">
-        <div class="animate-spin border-4 border-[var(--accent)] border-t-transparent rounded-full w-12 h-12 mx-auto mb-4"></div>
-        <p id="items-loading-text" class="text-gray-400">Loading menu items...</p>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden bg-darker p-4 border-b border-gray-700">
+    <nav class="flex flex-col space-y-4">
+      <a href="#" class="text-white hover:text-primary transition-colors duration-300"><i class="fas fa-home mr-2"></i> Home</a>
+      <a href="#" class="text-white hover:text-primary transition-colors duration-300"><i class="fas fa-book-open mr-2"></i> Menu</a>
+      <a href="#" class="text-white hover:text-primary transition-colors duration-300"><i class="fas fa-receipt mr-2"></i> My Orders</a>
+    </nav>
+  </div>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- MENU ITEMS -->
+    <section class="bg-darker rounded-2xl p-6 shadow-lg lg:col-span-2">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Build Your Combo</h2>
+        <div class="relative">
+          <input type="text" id="search-menu" placeholder="Search items..." class="bg-dark-light text-white rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-primary">
+          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
       </div>
-      <div id="menu-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+      
+      <!-- Category Tabs -->
+      <div class="flex overflow-x-auto mb-6 pb-2 scrollbar-thin">
+        <button class="category-tab active px-4 py-2 rounded-lg mr-2 bg-primary text-white font-medium whitespace-nowrap">All Items</button>
+        <button class="category-tab px-4 py-2 rounded-lg mr-2 bg-dark-light text-gray-300 hover:bg-gray-700 font-medium whitespace-nowrap">Main Course</button>
+        <button class="category-tab px-4 py-2 rounded-lg mr-2 bg-dark-light text-gray-300 hover:bg-gray-700 font-medium whitespace-nowrap">Appetizers</button>
+        <button class="category-tab px-4 py-2 rounded-lg mr-2 bg-dark-light text-gray-300 hover:bg-gray-700 font-medium whitespace-nowrap">Desserts</button>
+        <button class="category-tab px-4 py-2 rounded-lg mr-2 bg-dark-light text-gray-300 hover:bg-gray-700 font-medium whitespace-nowrap">Beverages</button>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for item in menuitems %}
+        <div class="menu-item bg-dark-light rounded-xl p-4 shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 animate-fadeIn" data-category="{{ item.category|default:'all' }}">
+          <div class="relative">
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-40 object-cover rounded-lg mb-3">
+            <span class="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">{{ item.category|default:"Main" }}</span>
+          </div>
+          <h3 class="text-lg font-bold text-white">{{ item.name }}</h3>
+          <p class="text-sm text-gray-300 mb-2">₹{{ item.price }}</p>
+          
+          <!-- Nutrition Info -->
+          <div class="text-xs text-gray-400 mb-3">
+            <div class="flex justify-between mb-1">
+              <span>Calories:</span>
+              <span>{{ item.calories }} kcal</span>
+            </div>
+            <div class="nutrition-bar bg-gray-700 rounded-full mb-2">
+              <div class="nutrition-bar bg-primary rounded-full" style="width: {% widthratio item.calories 800 100 %}%"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div><span class="text-primary">Prot:</span> {{ item.protein }}g</div>
+              <div><span class="text-green-400">Carbs:</span> {{ item.carbs }}g</div>
+              <div><span class="text-yellow-400">Fat:</span> {{ item.fat }}g</div>
+              <div><span class="text-purple-400">Fiber:</span> {{ item.fiber }}g</div>
+            </div>
+          </div>
+          
+          <button onclick="addToCart('{{ item.id }}','{{ item.name }}',{{ item.price }},{{ item.calories }},{{ item.protein }},{{ item.carbs }},{{ item.fat }},{{ item.fiber }})"
+            class="mt-2 px-3 py-2 bg-primary hover:bg-primary-dark rounded-lg w-full flex items-center justify-center transition-colors duration-300">
+            <i class="fas fa-plus mr-2"></i> Add to Cart
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      
+      <!-- Empty State -->
+      <div id="no-items" class="hidden text-center py-10">
+        <i class="fas fa-search text-5xl text-gray-600 mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-400">No items found</h3>
+        <p class="text-gray-500">Try adjusting your search or filter</p>
+      </div>
     </section>
 
-    <!-- Sidebar -->
-    <aside>
-      <div id="dropzone" class="bg-[#111] p-6 rounded-2xl shadow-lg min-h-[220px] flex flex-col justify-between">
-        <div>
-          <h2 class="text-[var(--accent)] font-semibold text-lg mb-1">🧾 Your Combo</h2>
-          <p id="drop-hint" class="text-sm text-gray-400">Drag items here or use + / − to add.</p>
-          <div id="summary-lines" class="mt-4 space-y-2 text-sm text-gray-200 min-h-[100px]"></div>
+    <!-- CART -->
+    <aside class="bg-darker rounded-2xl p-6 shadow-lg flex flex-col h-fit sticky top-24">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-secondary flex items-center">
+          <i class="fas fa-shopping-cart mr-2"></i> Your Cart
+        </h2>
+        <span id="cart-count" class="bg-primary text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">0</span>
+      </div>
+      
+      <div id="empty-cart" class="text-center py-8">
+        <i class="fas fa-shopping-basket text-5xl text-gray-600 mb-4"></i>
+        <h3 class="text-lg font-semibold text-gray-400">Your cart is empty</h3>
+        <p class="text-gray-500 text-sm">Add some delicious items to get started!</p>
+      </div>
+      
+      <ul id="cart-list" class="space-y-3 flex-1 overflow-y-auto pr-2 max-h-80 scrollbar-thin hidden"></ul>
+
+      <div id="cart-summary" class="hidden">
+        <div class="border-t border-gray-700 mt-4 pt-4 text-sm space-y-2">
+          <div class="flex justify-between"><span>Subtotal:</span><span id="subtotal">₹0.00</span></div>
+          <div class="flex justify-between"><span>GST (5%):</span><span id="gst">₹0.00</span></div>
+          <div class="flex justify-between"><span>Delivery Fee:</span><span id="delivery">₹30.00</span></div>
+          <div class="flex justify-between font-bold text-primary text-lg mt-2 pt-2 border-t border-gray-700">
+            <span>Total:</span><span id="total">₹0.00</span>
+          </div>
         </div>
 
-        <div class="mt-4">
-          <div class="flex justify-between text-gray-400">
-            <span>Subtotal</span><span id="subtotal-price">₹0.00</span>
+        <!-- Nutrition Summary -->
+        <div class="bg-dark-light mt-4 p-3 rounded-lg text-xs text-gray-300">
+          <h4 class="font-semibold mb-2 text-white">Nutrition Summary</h4>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <div><span class="text-primary">Calories:</span> <span id="nutrition-cal">0</span> kcal</div>
+            <div><span class="text-primary">Protein:</span> <span id="nutrition-protein">0</span>g</div>
+            <div><span class="text-green-400">Carbs:</span> <span id="nutrition-carbs">0</span>g</div>
+            <div><span class="text-yellow-400">Fat:</span> <span id="nutrition-fat">0</span>g</div>
           </div>
-          <div class="flex justify-between text-gray-400">
-            <span>GST (5%)</span><span id="gst-price">₹0.00</span>
+          <div class="w-full bg-gray-700 rounded-full h-2">
+            <div id="calorie-progress" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
           </div>
-          <div class="flex justify-between font-bold text-lg mt-2">
-            <span>Total</span><span id="total-price">₹0.00</span>
-          </div>
+          <p class="text-xs text-gray-400 mt-1" id="calorie-text">0% of daily 2000 kcal</p>
+        </div>
 
-          <button id="place-order" class="mt-4 w-full bg-[var(--accent)] hover:bg-[var(--accent-2)] text-black font-bold py-3 rounded-lg">
-            ✅ Place Order
+        <button class="mt-4 px-4 py-3 bg-secondary hover:bg-green-700 rounded-lg text-white font-semibold w-full flex items-center justify-center transition-colors duration-300 pulse">
+          <i class="fas fa-credit-card mr-2"></i> Proceed to Checkout
+        </button>
+        
+        <button onclick="clearCart()" class="mt-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white w-full text-sm">
+          <i class="fas fa-trash-alt mr-1"></i> Clear Cart
+        </button>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- AI COMBOS -->
+  <section class="container mx-auto px-4 py-6">
+    <div class="bg-darker rounded-2xl p-6 shadow-lg">
+      <h2 class="text-2xl font-bold text-primary mb-4 flex items-center">
+        <i class="fas fa-robot mr-2"></i> AI Combo Suggestions
+      </h2>
+      <p class="text-gray-400 mb-6">Let our AI create the perfect meal combo based on your preferences</p>
+
+      <div class="flex flex-wrap gap-4 mb-6">
+        <div class="flex-1 min-w-[200px]">
+          <label class="block text-sm font-medium text-gray-300 mb-1">Mood / Occasion</label>
+          <select id="mood" class="w-full p-3 rounded-lg bg-dark-light text-white border border-gray-700 focus:border-primary focus:ring-2 focus:ring-primary">
+            <option value="balanced">Balanced Meal</option>
+            <option value="light breakfast">Light Breakfast</option>
+            <option value="family dinner">Family Dinner</option>
+            <option value="quick snack">Quick Snack</option>
+            <option value="festive special">Festive Special</option>
+          </select>
+        </div>
+        
+        <div class="flex-1 min-w-[200px]">
+          <label class="block text-sm font-medium text-gray-300 mb-1">Dietary Profile</label>
+          <select id="profile" class="w-full p-3 rounded-lg bg-dark-light text-white border border-gray-700 focus:border-primary focus:ring-2 focus:ring-primary">
+            <option value="normal">Normal</option>
+            <option value="diabetic">Diabetic-Friendly</option>
+            <option value="weight loss">Weight Loss</option>
+            <option value="high protein">High Protein</option>
+            <option value="low carb">Low Carb</option>
+          </select>
+        </div>
+        
+        <div class="flex items-end">
+          <button onclick="fetchAICombo()" class="px-6 py-3 bg-primary hover:bg-primary-dark rounded-lg text-white font-semibold flex items-center">
+            <i class="fas fa-magic mr-2"></i> Suggest Combo
           </button>
         </div>
       </div>
-    </aside>
-  </main>
 
-  <!-- Confirm Modal -->
-  <div id="confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
-    <div class="modal-backdrop absolute inset-0"></div>
-    <div class="bg-[#111] border border-gray-800 rounded-xl p-6 z-10 w-[90%] max-w-md shadow-xl">
-      <h3 class="text-lg font-semibold text-[var(--accent)] mb-2">Confirm order</h3>
-      <p class="text-gray-300 mb-4">Do you want to proceed to checkout with the selected items?</p>
-      <div class="flex justify-end space-x-3">
-        <button id="modal-cancel" class="px-4 py-2 rounded text-gray-200 border border-gray-700">Cancel</button>
-        <button id="modal-ok" class="px-4 py-2 rounded bg-[var(--accent)] text-black font-bold">Continue</button>
+      <div id="ai-combo-loading" class="hidden text-center py-8">
+        <i class="fas fa-spinner fa-spin text-3xl text-primary mb-3"></i>
+        <p class="text-gray-400">AI is crafting your perfect combo...</p>
       </div>
+
+      <div id="ai-combo-result" class="space-y-4"></div>
     </div>
-  </div>
+  </section>
 
-  <!-- Checkout Modal -->
-  <div id="checkout-modal" class="fixed inset-0 hidden items-center justify-center z-50">
-    <div class="absolute inset-0 bg-black/60"></div>
-    <div class="relative w-full max-w-md p-6 bg-[#111] rounded-lg border border-gray-800">
-      <h3 class="text-orange-400 font-semibold mb-2">Enter delivery details</h3>
-      <form id="checkout-form" class="space-y-3">
-        <div>
-          <label class="block text-sm text-gray-300">Name *</label>
-          <input name="customer_name" required class="w-full mt-1 p-2 rounded bg-black border border-gray-700" />
+  <!-- FOOTER -->
+  <footer class="bg-black p-6 text-center text-gray-400">
+    <div class="container mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+        <div class="mb-4 md:mb-0">
+          <h3 class="text-xl font-bold text-primary mb-2">Swad of Tamil</h3>
+          <p class="text-sm">Authentic Tamil Cuisine with a Modern Twist</p>
         </div>
-        <div>
-          <label class="block text-sm text-gray-300">Phone *</label>
-          <input name="customer_phone" required class="w-full mt-1 p-2 rounded bg-black border border-gray-700" />
+        <div class="flex space-x-4">
+          <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">
+            <i class="fab fa-twitter"></i>
+          </a>
         </div>
-        <div>
-          <label class="block text-sm text-gray-300">Email</label>
-          <input name="customer_email" class="w-full mt-1 p-2 rounded bg-black border border-gray-700" />
-        </div>
-        <div>
-          <label class="block text-sm text-gray-300">Address</label>
-          <textarea name="delivery_address" class="w-full mt-1 p-2 rounded bg-black border border-gray-700"></textarea>
-        </div>
-        <div class="flex justify-end gap-2">
-          <button type="button" id="checkout-cancel" class="px-4 py-2 border rounded">Cancel</button>
-          <button type="submit" id="checkout-submit" class="px-4 py-2 bg-orange-400 text-black rounded">Place Order</button>
-        </div>
-      </form>
+      </div>
+      <p class="text-sm border-t border-gray-800 pt-4">© 2025 Swad of Tamil. Eat Smart. Live Healthy.</p>
     </div>
-  </div>
+  </footer>
 
-  <!-- JS -->
-  <script>const PLACEHOLDER_IMG = "{% static 'img/placeholder.png' %}";</script>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const menuContainer = document.getElementById('menu-container');
-    const apiUrl = "{% url 'vendors:vendor_items_api' vendor.vendor_code %}";
-    const createUrl = "{% url 'vendors:create_custom_order' vendor.vendor_code %}";
-    const loader = document.getElementById('items-loading');
-    const loaderText = document.getElementById('items-loading-text');
-    const dropzone = document.getElementById('dropzone');
-    const summaryLines = document.getElementById('summary-lines');
-    const subtotalEl = document.getElementById('subtotal-price');
-    const gstEl = document.getElementById('gst-price');
-    const totalEl = document.getElementById('total-price');
-    const placeBtn = document.getElementById('place-order');
-    const modal = document.getElementById('confirm-modal');
-    const modalOk = document.getElementById('modal-ok');
-    const modalCancel = document.getElementById('modal-cancel');
-    const checkoutModal = document.getElementById('checkout-modal');
-    const checkoutForm = document.getElementById('checkout-form');
-    const checkoutCancel = document.getElementById('checkout-cancel');
+<script>
+let cart = [];
 
-    let items = {}, cart = {};
-    const GST = 5.0;
+// Mobile menu toggle
+document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+});
 
-    function formatINR(v){ return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(v); }
-    function getCsrf(){ const c = document.cookie.split(';').map(x=>x.trim()).find(x=>x.startsWith('csrftoken=')); return c?c.split('=')[1]:''; }
-    function showError(msg){ loaderText.innerText = msg; loaderText.classList.add('text-red-500'); }
-
-    async function fetchItems(){
-      try {
-        const res = await fetch(apiUrl,{credentials:'same-origin'});
-        const data = await res.json();
-        if(!res.ok) throw new Error(data.error||'Failed to load');
-        renderItems(data.items||[]);
-        loader.classList.add('hidden');
-        menuContainer.classList.remove('hidden');
-      } catch(err){ console.error(err); showError('❌ Failed to load menu items.'); }
-    }
-
-    function renderItems(list){
-      menuContainer.innerHTML=''; items={}; cart={};
-      if(!list.length){ menuContainer.innerHTML='<p class="col-span-2 text-gray-400">No items available.</p>'; return; }
-      list.forEach(it=>{
-        const id=Number(it.id); items[id]=it; cart[id]=0;
-        const card=document.createElement('div');
-        card.className='bg-[#111] p-4 rounded-lg shadow cursor-move flex flex-col'; card.draggable=true; card.dataset.itemId=id;
-        const imgUrl=it.image||PLACEHOLDER_IMG;
-        card.innerHTML=`
-          <img src="${imgUrl}" alt="${escapeHtml(it.name)}" class="w-full h-36 object-cover rounded mb-3"/>
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1">
-              <h4 class="text-orange-400 font-semibold">${escapeHtml(it.name)}</h4>
-              <p class="text-xs text-gray-400 mt-1">${escapeHtml(it.description||'')}</p>
-            </div>
-            <div class="text-right">
-              <div class="font-bold">${formatINR(it.price)}</div>
-              <div class="flex items-center mt-2">
-                <button class="qty-btn minus px-3 py-1 rounded bg-gray-700 text-white" data-id="${id}">−</button>
-                <div id="qty-${id}" class="px-3 text-center">0</div>
-                <button class="qty-btn plus px-3 py-1 rounded bg-[var(--accent)] text-black" data-id="${id}">+</button>
-              </div>
-            </div>
-          </div>
-          <div class="text-right text-xs text-gray-300 mt-2"><span id="line-${id}">₹0.00</span></div>
-        `;
-        menuContainer.appendChild(card);
-        card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(id));card.classList.add('dragging');});
-        card.addEventListener('dragend',()=>card.classList.remove('dragging'));
-        card.querySelector('.plus').addEventListener('click',()=>changeQty(id,1));
-        card.querySelector('.minus').addEventListener('click',()=>changeQty(id,-1));
-      });
-    }
-
-    function escapeHtml(text){return !text?'':text.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-    dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('drop-over');});
-    dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('drop-over'));
-    dropzone.addEventListener('drop',e=>{e.preventDefault();dropzone.classList.remove('drop-over');const id=Number(e.dataTransfer.getData('text/plain'));if(!isNaN(id))changeQty(id,1);});
-
-    function changeQty(id,delta){
-      const it=items[id]; if(!it) return;
-      const price = parseFloat(it.price);
-      cart[id]=Math.max(0,(cart[id]||0)+delta);
-      document.getElementById(`qty-${id}`).innerText=cart[id];
-      document.getElementById(`line-${id}`).innerText=formatINR((cart[id]||0)*price);
-      updateSummary();
-    }
-
-    function updateSummary(){
-      summaryLines.innerHTML='';let subtotal=0;
-      Object.keys(cart).forEach(k=>{
-        const id=+k,q=cart[id]; if(!q)return;
-        const it=items[id], price=parseFloat(it.price), line=q*price;
-        subtotal+=line;
-        const row=document.createElement('div');
-        row.className='flex justify-between text-sm';
-        row.innerHTML=`<div>${escapeHtml(it.name)} × ${q}</div><div>${formatINR(line)}</div>`;
-        summaryLines.appendChild(row);
-      });
-      subtotalEl.innerText=formatINR(subtotal);
-      const gst=+(subtotal*(GST/100));
-      gstEl.innerText=formatINR(gst);
-      totalEl.innerText=formatINR(subtotal+gst);
-    }
-
-    function show(el){el.classList.remove('hidden');el.style.display='flex';}
-    function hide(el){el.classList.add('hidden');el.style.display='none';}
-
-    placeBtn.addEventListener('click',()=>{if(!Object.keys(cart).some(k=>cart[k]>0)){alert('Select items first');return;}show(modal);});
-    modalCancel.addEventListener('click',()=>hide(modal));
-    modalOk.addEventListener('click',()=>{hide(modal);show(checkoutModal);});
-
-    checkoutCancel.addEventListener('click',()=>hide(checkoutModal));
-    checkoutForm.addEventListener('submit',async e=>{
-      e.preventDefault();
-      const payload={items:Object.keys(cart).filter(k=>cart[k]>0).map(k=>({id:+k,quantity:cart[k]})),...Object.fromEntries(new FormData(checkoutForm).entries())};
-      try{
-        const res=await fetch(createUrl,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRFToken':getCsrf()},body:JSON.stringify(payload)});
-        const data=await res.json();
-        if(!res.ok||!data.success)throw new Error(data.error||`Order failed (${res.status})`);
-        window.location.href=data.redirect_url||`/orders/detail/${data.order_id}/`;
-      }catch(err){console.error(err);alert('❌ Order failed: '+(err.message||'Network error'));}
-    });
-
-    fetchItems();
+// Category tabs
+document.querySelectorAll('.category-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active', 'bg-primary', 'text-white'));
+    document.querySelectorAll('.category-tab').forEach(t => t.classList.add('bg-dark-light', 'text-gray-300'));
+    
+    this.classList.remove('bg-dark-light', 'text-gray-300');
+    this.classList.add('active', 'bg-primary', 'text-white');
+    
+    const category = this.textContent.trim().toLowerCase().replace(' ', '-');
+    filterMenuItems(category);
   });
-  </script>
+});
+
+// Search functionality
+document.getElementById('search-menu').addEventListener('input', function(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  filterMenuItems('all', searchTerm);
+});
+
+function filterMenuItems(category, searchTerm = '') {
+  const menuItems = document.querySelectorAll('.menu-item');
+  let visibleCount = 0;
+  
+  menuItems.forEach(item => {
+    const itemCategory = item.getAttribute('data-category');
+    const itemName = item.querySelector('h3').textContent.toLowerCase();
+    const itemDescription = item.querySelector('p').textContent.toLowerCase();
+    
+    const categoryMatch = category === 'all-items' || category === 'all' || itemCategory === category;
+    const searchMatch = !searchTerm || itemName.includes(searchTerm) || itemDescription.includes(searchTerm);
+    
+    if (categoryMatch && searchMatch) {
+      item.style.display = 'block';
+      visibleCount++;
+    } else {
+      item.style.display = 'none';
+    }
+  });
+  
+  // Show/hide no items message
+  const noItems = document.getElementById('no-items');
+  if (visibleCount === 0) {
+    noItems.classList.remove('hidden');
+  } else {
+    noItems.classList.add('hidden');
+  }
+}
+
+function addToCart(id, name, price, cal, protein, carbs, fat, fiber) {
+  let existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({id, name, price, qty:1, cal, protein, carbs, fat, fiber});
+  }
+  
+  // Show notification
+  showNotification(`${name} added to cart!`);
+  renderCart();
+}
+
+function showNotification(message) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = 'fixed top-20 right-4 bg-primary text-white p-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+  notification.innerHTML = `
+    <div class="flex items-center">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Animate in
+  setTimeout(() => {
+    notification.classList.remove('translate-x-full');
+  }, 10);
+  
+  // Animate out after 3 seconds
+  setTimeout(() => {
+    notification.classList.add('translate-x-full');
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 300);
+  }, 3000);
+}
+
+function renderCart() {
+  const cartList = document.getElementById("cart-list");
+  const emptyCart = document.getElementById("empty-cart");
+  const cartSummary = document.getElementById("cart-summary");
+  const cartCount = document.getElementById("cart-count");
+  
+  cartList.innerHTML = "";
+  let subtotal = 0, cal=0, protein=0, carbs=0, fat=0, fiber=0;
+
+  if (cart.length === 0) {
+    emptyCart.classList.remove("hidden");
+    cartList.classList.add("hidden");
+    cartSummary.classList.add("hidden");
+    cartCount.textContent = "0";
+    return;
+  }
+  
+  emptyCart.classList.add("hidden");
+  cartList.classList.remove("hidden");
+  cartSummary.classList.remove("hidden");
+  cartCount.textContent = cart.length;
+
+  cart.forEach((item, index) => {
+    let itemTotal = item.qty * item.price;
+    subtotal += itemTotal;
+    cal += item.qty * item.cal;
+    protein += item.qty * item.protein;
+    carbs += item.qty * item.carbs;
+    fat += item.qty * item.fat;
+    fiber += item.qty * item.fiber;
+
+    let li = document.createElement("li");
+    li.className = "flex justify-between items-center bg-dark-light p-3 rounded-lg cart-animate";
+    li.innerHTML = `
+      <div class="flex-1">
+        <div class="font-medium">${item.name}</div>
+        <div class="text-xs text-gray-400">₹${item.price} each</div>
+      </div>
+      <div class="flex items-center">
+        <button onclick="updateQuantity(${index}, -1)" class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center hover:bg-gray-600">
+          <i class="fas fa-minus text-xs"></i>
+        </button>
+        <span class="mx-2 font-medium">${item.qty}</span>
+        <button onclick="updateQuantity(${index}, 1)" class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center hover:bg-gray-600">
+          <i class="fas fa-plus text-xs"></i>
+        </button>
+        <span class="ml-3 font-medium">₹${itemTotal.toFixed(2)}</span>
+        <button onclick="removeFromCart(${index})" class="ml-2 text-red-400 hover:text-red-300">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    `;
+    cartList.appendChild(li);
+  });
+
+  let gst = subtotal * 0.05;
+  let delivery = cart.length > 0 ? 30 : 0;
+  let total = subtotal + gst + delivery;
+
+  document.getElementById("subtotal").innerText = "₹" + subtotal.toFixed(2);
+  document.getElementById("gst").innerText = "₹" + gst.toFixed(2);
+  document.getElementById("delivery").innerText = "₹" + delivery.toFixed(2);
+  document.getElementById("total").innerText = "₹" + total.toFixed(2);
+
+  // Update nutrition summary
+  document.getElementById("nutrition-cal").textContent = cal;
+  document.getElementById("nutrition-protein").textContent = protein.toFixed(1);
+  document.getElementById("nutrition-carbs").textContent = carbs.toFixed(1);
+  document.getElementById("nutrition-fat").textContent = fat.toFixed(1);
+  
+  // Update calorie progress bar
+  const calorieProgress = document.getElementById("calorie-progress");
+  const caloriePercent = Math.min((cal / 2000) * 100, 100);
+  calorieProgress.style.width = `${caloriePercent}%`;
+  document.getElementById("calorie-text").textContent = `${caloriePercent.toFixed(1)}% of daily 2000 kcal`;
+}
+
+function updateQuantity(index, change) {
+  cart[index].qty += change;
+  
+  if (cart[index].qty <= 0) {
+    cart.splice(index, 1);
+  }
+  
+  renderCart();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function clearCart() {
+  if (cart.length === 0) return;
+  
+  if (confirm("Are you sure you want to clear your cart?")) {
+    cart = [];
+    renderCart();
+    showNotification("Cart cleared!");
+  }
+}
+
+async function fetchAICombo() {
+  const mood = document.getElementById("mood").value;
+  const profile = document.getElementById("profile").value;
+  const loading = document.getElementById("ai-combo-loading");
+  const result = document.getElementById("ai-combo-result");
+  
+  // Show loading
+  loading.classList.remove("hidden");
+  result.innerHTML = "";
+  
+  try {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const url = `{% url 'vendors:ai_combo_suggestions' vendor.vendor_code %}?mood=${mood}&profile=${profile}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    
+    if (!data.success) {
+      throw new Error("AI Combo fetch failed!");
+    }
+    
+    let html = `
+      <div class="p-5 bg-dark-light rounded-lg animate-fadeIn border-l-4 border-primary">
+        <h3 class="text-xl font-semibold text-primary mb-2 capitalize">${mood.replace('-', ' ')} (${profile.replace('-', ' ')})</h3>
+        <p class="text-gray-400 text-sm mb-4">AI-curated combo based on your preferences</p>
+        <ul class="mb-4 space-y-2">`;
+    
+    data.items.forEach(i => {
+      html += `
+        <li class="flex justify-between items-center py-2 border-b border-gray-700">
+          <div>
+            <span class="font-medium">${i.qty} × ${i.name}</span>
+            <span class="text-xs text-gray-400 ml-2">₹${i.price} each</span>
+          </div>
+          <span class="font-semibold">₹${(i.qty * i.price).toFixed(2)}</span>
+        </li>`;
+    });
+    
+    html += `</ul>
+        <div class="grid grid-cols-2 gap-3 text-sm mb-4 p-3 bg-gray-800 rounded-lg">
+          <div class="flex justify-between"><span>Subtotal:</span><span>₹${data.subtotal.toFixed(2)}</span></div>
+          <div class="flex justify-between"><span>GST (5%):</span><span>₹${data.gst.toFixed(2)}</span></div>
+          <div class="flex justify-between"><span>Delivery:</span><span>₹${data.delivery.toFixed(2)}</span></div>
+          <div class="flex justify-between font-bold text-primary col-span-2 pt-2 border-t border-gray-700">
+            <span>Total:</span><span>₹${data.total.toFixed(2)}</span>
+          </div>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-lg mb-3">
+          <h4 class="font-semibold mb-2 text-white flex items-center"><i class="fas fa-apple-alt mr-2"></i> Nutrition Profile</h4>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div><span class="text-primary">Calories:</span> ${data.nutrition.cal} kcal</div>
+            <div><span class="text-primary">Protein:</span> ${data.nutrition.protein}g</div>
+            <div><span class="text-green-400">Carbs:</span> ${data.nutrition.carbs}g</div>
+            <div><span class="text-yellow-400">Fat:</span> ${data.nutrition.fat}g</div>
+          </div>
+        </div>
+        <div class="p-3 bg-primary bg-opacity-10 rounded-lg border border-primary border-opacity-20">
+          <p class="text-primary font-medium italic">"${data.tip}"</p>
+        </div>
+        <button onclick='addComboToCart(${JSON.stringify(data.items)})'
+          class="mt-4 px-4 py-2 bg-primary hover:bg-primary-dark rounded-lg text-white font-semibold w-full flex items-center justify-center">
+          <i class="fas fa-cart-plus mr-2"></i> Add Combo to Cart
+        </button>
+      </div>`;
+    
+    result.innerHTML = html;
+  } catch (error) {
+    result.innerHTML = `
+      <div class="p-4 bg-red-900 bg-opacity-20 text-red-400 rounded-lg border border-red-800 text-center">
+        <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+        <p>Failed to generate combo suggestion. Please try again.</p>
+      </div>`;
+  } finally {
+    loading.classList.add("hidden");
+  }
+}
+
+function addComboToCart(items) {
+  items.forEach(i => {
+    let existing = cart.find(ci => ci.name === i.name);
+    if (existing) {
+      existing.qty += i.qty;
+    } else {
+      // Create a unique ID if not provided
+      const id = i.id || `${i.name.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}`;
+      cart.push({...i, id});
+    }
+  });
+  
+  renderCart();
+  showNotification("AI Combo added to cart!");
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+  renderCart();
+});
+</script>
 </body>
 </html>
